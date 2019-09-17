@@ -1,0 +1,21 @@
+{
+  "name": "dat/utils",
+  "type": "Libiary",
+  "description": "Common PHP Libiary",
+  "authors": [
+    {
+      "name": "Dat",
+      "email": "dat@nslasha.org",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.2.10",
+    "ext-gmp": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dat\\Utils\\": "src/"
+    }
+  }
+}
