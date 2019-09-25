@@ -88,6 +88,50 @@ class CmnUtilTest extends AbstractTest
         self::assertEquals("to", $r);
     }
 
+    /**
+     * @param $path
+     * @param $er
+     * @dataProvider providerGetFileExtFromPath
+     */
+    public function testGetFileExtFromPath($path, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $r = call_user_func_array($fullMethodName, [$path]);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerGetFileExtFromPath()
+    {
+        return [
+            ['/absolute/path/Pattern/to/Test.test.html', 'html'],
+            ['http://absolute/path/Pattern/to/Test.test.jpg', 'jpg'],
+            ['/absolute/path/Pattern/to/Test.test.', ''],
+            ['/absolute/path/Pattern/to/Test', ''],
+        ];
+    }
+
+    /**
+     * @param $url
+     * @param $er
+     * @dataProvider providerEncodeUrlOnlySpecial
+     */
+    public function testEncodeUrlOnlySpecial($url, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $r = call_user_func_array($fullMethodName, [$url]);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerEncodeUrlOnlySpecial()
+    {
+        return [
+            ['https://www.xxx.com/something/image/21550122908_ต้นฉบับ2.png', 'https://www.xxx.com/something/image/21550122908_%E0%B8%95%E0%B9%89%E0%B8%99%E0%B8%89%E0%B8%9A%E0%B8%B1%E0%B8%9A2.png'],
+            ['http://test.com/abc def', 'http://test.com/abc%20def']
+        ];
+    }
+
     public function testDumpVar()
     {
         $method = self::getTargetMethod(__FUNCTION__);
@@ -449,5 +493,34 @@ class CmnUtilTest extends AbstractTest
         $testCase = ['\NonExistClass', 'RAND', false];
         $r = call_user_func_array($fullMethodName, $testCase);
         self::assertNull($r);
+    }
+
+    /**
+     * @param $str
+     * @param $er
+     * @dataProvider providerGetFloatFrStr
+     */
+    public function testGetFloatFrStr($str, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $testCase = [$str];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerGetFloatFrStr()
+    {
+        return [
+            ["$1234", 1234],
+            ["$12.34", 12.34],
+            ["$123.4", 123.4],
+            ["$1.234", 1.234],
+            ["$1.234", 1.234],
+            ["$1.23.4", 1.23],
+            ["٦٧", 0],
+            ["abcde$123.4.5xyz6", 123.4],
+            ["฿800", 800],
+        ];
     }
 }

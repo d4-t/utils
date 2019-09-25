@@ -1222,7 +1222,7 @@ class CmnUtil
      * @param $path
      * @return mixed
      */
-    public static function getFileNameFromPath($path)
+    public static function getFileNameFromPath(string $path): string
     {
         $pp = pathinfo($path);
         return $pp['basename'];
@@ -1233,10 +1233,20 @@ class CmnUtil
      * @param $path
      * @return mixed
      */
-    public static function getFileBaseNameFromPath($path)
+    public static function getFileBaseNameFromPath(string $path): string
     {
         $pp = pathinfo($path);
         return $pp['filename'];
+    }
+
+    public static function getFileExtFromPath(string $path): string
+    {
+        $fn = self::getFileNameFromPath($path);
+        if (strpos($fn, '.') === false) {
+            return '';
+        }
+        $tmp = explode('.', $fn);
+        return end($tmp);
     }
 
     /**
@@ -1316,11 +1326,11 @@ class CmnUtil
      * Align tables on the same page
      * @param array $tables
      * @param array $headers
-     * @param string $seperator
+     * @param string $separator
      * @param int $dist
      * @return string
      */
-    public static function alignTables(array $tables, array $headers = [], string $seperator = " ", int $dist = 3)
+    public static function alignTables(array $tables, array $headers = [], string $separator = " ", int $dist = 3)
     {
         $tArrs = [];
         $size = 0;
@@ -1344,7 +1354,7 @@ class CmnUtil
                 } else {
                     $r .= self::strPad("", mb_strlen(end($tArr)));
                 }
-                $r .= self::strPad("", $dist, $seperator);
+                $r .= self::strPad("", $dist, $separator);
             }
             $r .= PHP_EOL;
         }
@@ -1435,6 +1445,24 @@ class CmnUtil
             $isLog and CmnUtil::logDebug($e->getMessage(), __FUNCTION__ . " Error");
         }
         return null;
+    }
+
+    /**
+     * Get float number from mixed string
+     * @param string $str
+     * @return float
+     */
+    public static function getFloatFrStr(string $str): float
+    {
+        return (float)filter_var($str, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    }
+
+    public static function encodeUrlOnlySpecial(string $url): string
+    {
+        $r = preg_replace_callback('/[^\x20-\x7f]/', function ($match) {
+            return urlencode($match[0]);
+        }, $url);
+        return str_replace(' ', '%20', $r);
     }
 
     protected static function convertLine($e, $d, &$r = null, $key = null)
