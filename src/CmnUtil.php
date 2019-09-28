@@ -18,6 +18,8 @@ class CmnUtil
     const LOGTYPE_DEBUG = 2;
     const LOGTYPE_ERROR = 3;
 
+    const TEST = 0;
+
 
     /**
      * show a status bar in the console
@@ -1433,7 +1435,7 @@ class CmnUtil
         return "";
     }
 
-    public static function getConstantValueByName(string $class, string $name, bool $isLog = true)
+    public static function getConstantValueByName(string $class, string $name, bool $isLog = true, $default = null)
     {
         try {
             $rClass = new \ReflectionClass($class);
@@ -1444,7 +1446,26 @@ class CmnUtil
         } catch (\ReflectionException $e) {
             $isLog and CmnUtil::logDebug($e->getMessage(), __FUNCTION__ . " Error");
         }
-        return null;
+        return $default;
+    }
+
+    public static function getConstantValues(string $class, string $prefix = "", $isLog = true)
+    {
+        $r = [];
+        try {
+            $rClass = new \ReflectionClass($class);
+            $constants = $rClass->getConstants();
+            foreach ($constants as $name => $val) {
+                if (substr($name, 0, strlen($prefix)) !== $prefix) {
+                    unset($constants[$name]);
+                } else {
+                    array_push($r, $val);
+                }
+            }
+        } catch (\ReflectionException $e) {
+            $isLog and CmnUtil::logDebug($e->getMessage(), __FUNCTION__ . " Error");
+        }
+        return $r;
     }
 
     /**

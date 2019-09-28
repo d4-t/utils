@@ -476,23 +476,50 @@ class CmnUtilTest extends AbstractTest
 
     }
 
-    public function testGetConstantValueByName()
+    /**
+     * @param $class
+     * @param $name
+     * @param $er
+     * @dataProvider providerGetConstantValueByName
+     */
+    public function testGetConstantValueByName($class, $name, $er)
     {
         $method = self::getTargetMethod(__FUNCTION__);
         $fullMethodName = self::TARGET_CLASS . '::' . $method;
-        $testCase = ['\Dat\Utils\CmnUtil', 'LOGTYPE_NOTICE'];
+        $testCase = [$class, $name, false];
         $r = call_user_func_array($fullMethodName, $testCase);
-        $er = 0;
         self::assertEquals($er, $r);
+    }
 
-        $testCase = ['\Dat\Utils\CmnUtil', 'LOGTYPE_ERROR'];
+    public function providerGetConstantValueByName()
+    {
+        return [
+            ['\Dat\Utils\CmnUtil', 'LOGTYPE_NOTICE', CmnUtil::LOGTYPE_NOTICE],
+            ['\Dat\Utils\CmnUtil', 'LOGTYPE_ERROR', CmnUtil::LOGTYPE_ERROR],
+            ['\NonExistClass', 'RAND', null]
+        ];
+    }
+
+    /**
+     * @param $class
+     * @param $values
+     * @dataProvider providerGetConstantValues
+     */
+    public function testGetConstantValues($class, $prefix, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $testCase = [$class, $prefix, false];
         $r = call_user_func_array($fullMethodName, $testCase);
-        $er = 3;
         self::assertEquals($er, $r);
+    }
 
-        $testCase = ['\NonExistClass', 'RAND', false];
-        $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertNull($r);
+    public function providerGetConstantValues()
+    {
+        return [
+            ['\Dat\Utils\CmnUtil', 'LOGTYPE', [CmnUtil::LOGTYPE_NOTICE, CmnUtil::LOGTYPE_WARNING, CmnUtil::LOGTYPE_DEBUG, CmnUtil::LOGTYPE_ERROR]],
+            ['\Dat\Utils\CmnUtil', '', [CmnUtil::LOGTYPE_NOTICE, CmnUtil::LOGTYPE_WARNING, CmnUtil::LOGTYPE_DEBUG, CmnUtil::LOGTYPE_ERROR, CmnUtil::TEST]],
+        ];
     }
 
     /**
