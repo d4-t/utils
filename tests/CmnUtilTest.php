@@ -1,6 +1,7 @@
 <?php
 
 namespace Dat\Utils;
+
 require_once('../src/BashUtil.php');
 require_once('../src/BaseUtil.php');
 require_once('../src/CmnUtil.php');
@@ -33,7 +34,6 @@ class CmnUtilTest extends AbstractTest
         $testCase = ["/absolute/path/Pattern/to/Test", "/absolute/"];
         $r = call_user_func_array($fullMethodName, $testCase);
         self::assertEquals("path/Pattern/to/Test", $r);
-
     }
 
     public function testRightTrim()
@@ -51,7 +51,6 @@ class CmnUtilTest extends AbstractTest
         $testCase = ["/absolute/path/Pattern/to/Test", "/absolute/"];
         $r = call_user_func_array($fullMethodName, $testCase);
         self::assertEquals("", $r);
-
     }
 
     public function testGetFileNameFromPath()
@@ -188,8 +187,7 @@ class CmnUtilTest extends AbstractTest
             , "key4" => ["name" => "value 1fsaf", "name3" => true, "name2" => 127983]
             , "key5" => ["name" => "value 1fsaf", "name4" => ['a' => 'b'], "name567890" => 127983]
         ];
-        $er =
-            '+------+-------+-------------+-------------+--------+-------+-----------+------------+
+        $er = '+------+-------+-------------+-------------+--------+-------+-----------+------------+
 | key  | value | name        | name1       | name2  | name3 | name4     | name567890 |
 +------+-------+-------------+-------------+--------+-------+-----------+------------+
 | key0 | abc   |             |             |        |       |           |            |
@@ -205,8 +203,7 @@ class CmnUtilTest extends AbstractTest
         $arr = [
             "key1" => ["name" => "value 11234", "name1" => "value 2....", "name2" => 123]
         ];
-        $er =
-            '+------+-------------+-------------+-------+
+        $er = '+------+-------------+-------------+-------+
 | key  | name        | name1       | name2 |
 +------+-------------+-------------+-------+
 | key1 | value 11234 | value 2.... |   123 |
@@ -314,7 +311,6 @@ class CmnUtilTest extends AbstractTest
         ];
         $r = call_user_func_array($fullMethodName, [$arr]);
         self::assertEquals(4, $r);
-
     }
 
     public function testGetParam()
@@ -338,7 +334,6 @@ class CmnUtilTest extends AbstractTest
 
         $r = call_user_func_array($fullMethodName, ['g', $arr]);
         self::assertFalse($r);
-
     }
 
     public function testSetParam()
@@ -472,8 +467,6 @@ class CmnUtilTest extends AbstractTest
         $testCase = ['\NonExistClass', 'RAND', 0, true, false];
         $r = call_user_func_array($fullMethodName, $testCase);
         self::assertEquals('', $r);
-
-
     }
 
     /**
@@ -548,6 +541,39 @@ class CmnUtilTest extends AbstractTest
             ["٦٧", 0],
             ["abcde$123.4.5xyz6", 123.4],
             ["฿800", 800],
+        ];
+    }
+
+    /**
+     * 
+     * @param type $url
+     * @param type $er
+     * @dataProvider providerGetGetParamFrUrl
+
+     */
+    public function testGetGetParamFrUrl($url, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $testCase = [$url];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerGetGetParamFrUrl()
+    {
+        return [
+            ["//maps.googleapis.com/maps/api/staticmap?center=13.77148527637,100.49234518194&zoom=16&size=378x250&maptype=roadmap&markers=color:red%7Clabel:C%7C13.77148527637,100.49234518194&key=AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A", [
+                    'center' => '13.77148527637,100.49234518194',
+                    'zoom' => '16',
+                    'size' => '378x250',
+                    'maptype' => 'roadmap',
+                    'markers' => 'color:red%7Clabel:C%7C13.77148527637,100.49234518194',
+                    'key' => 'AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A'
+                ]],
+            ["http://g.cn/?a=1&b=2&c", ['a' => 1, 'b' => 2, 'c' => true]],
+            ["http://g.cn/?a=1&b=2=3&c", ['a' => 1, 'c' => true]],
+            ['?a=b', ['a' => 'b']],
         ];
     }
 }

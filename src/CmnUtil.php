@@ -17,9 +17,7 @@ class CmnUtil
     const LOGTYPE_WARNING = 1;
     const LOGTYPE_DEBUG = 2;
     const LOGTYPE_ERROR = 3;
-
     const TEST = 0;
-
 
     /**
      * show a status bar in the console
@@ -281,7 +279,6 @@ class CmnUtil
             if (is_array($var)) {
                 $r .= PHP_EOL . print_r($var, true);
             } elseif (is_object($var)) {
-//                $r .= PHP_EOL;
                 $r .= self::getColoredString("  Class: ", 'yellow') . get_class($var) . PHP_EOL;
                 if ($verbose === true || $verbose === 1) {
                     ob_start();
@@ -1688,6 +1685,20 @@ class CmnUtil
         ];
 
         return isset($mime_map[$mime]) === true ? $mime_map[$mime] : false;
+    }
+
+    public static function getGetParamFrUrl(string $url): array
+    {
+        $r = [];
+        if (strpos($url, '?') === false) return $r;
+        $trimedUrl = substr($url, strpos($url, '?') + 1);
+        $arr = explode('&', $trimedUrl);
+        foreach ($arr as $line) {
+            $lineArr = explode('=', $line);
+            if (count($lineArr) > 2) continue;
+            $r[$lineArr[0]] = $lineArr[1] ?? true;
+        }
+        return $r;
     }
 
     protected static function convertLine($e, $d, &$r = null, $key = null)
