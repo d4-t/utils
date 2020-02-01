@@ -576,4 +576,44 @@ class CmnUtilTest extends AbstractTest
             ['?a=b', ['a' => 'b']],
         ];
     }
+
+    /**
+     * 
+     * @param type $dateDiff
+     * @param type $precision
+     * @param type $er
+     * @dataProvider providerDateIntervalToString
+     */
+    public function testDateIntervalToString($dateDiff, $precision, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = $precision ? [$dateDiff, $precision] : [$dateDiff];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerDateIntervalToString()
+    {
+        $di = new \DateInterval('P3Y2M1DT12H10M8S');
+        $di->invert = 1;
+        $di1 = \DateInterval::createFromDateString('1 month -3 days 5 hours');
+        $di1->invert = 1;
+        $di2 = \DateInterval::createFromDateString('-1000 microsecond');
+        $di2->invert = 1;
+        return[
+            [$di, null, "-3Y2M1D 12h10m8s"],
+            [$di1, null, "1M3D 5h"],
+            [$di2, null, "0.001s"],
+            [\DateInterval::createFromDateString('2 years'), 'y', "2Y"],
+            [\DateInterval::createFromDateString('-1000 microsecond'), 's', "-0.001s"],
+            [\DateInterval::createFromDateString('1 microsecond'), null, "0.000001s"],
+            [\DateInterval::createFromDateString('10 microsecond'), null, "0.00001s"],
+            [\DateInterval::createFromDateString('-10 microsecond'), null, "-0.00001s"],
+            [\DateInterval::createFromDateString('10 microsecond'), 'f', "10microseconds"],
+            [\DateInterval::createFromDateString('-10 microsecond'), 'f', "-10microseconds"],
+            [\DateInterval::createFromDateString('3 days 5 hours 3 minutes'), 's', "3D 5h3m0s"],
+            [\DateInterval::createFromDateString('3 days 5 hours 3 minutes'), null, "3D 5h3m"],
+            [new \DateInterval('P3Y2M1DT12H10M8S'), null, "3Y2M1D 12h10m8s"],
+        ];
+    }
 }

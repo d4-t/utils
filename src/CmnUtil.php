@@ -1665,6 +1665,70 @@ class CmnUtil
         return $r;
     }
 
+    /**
+     * 
+     * @param DateInterval $dateDiff
+     * @param string $precision Note: M for month, m for minute
+     *      Suggested value Y,M,D,h,i,s,f,z z for round up value
+     *      Allowed value: Y,M,D,H,I,S,F,y,m,d,h,i,s,z 
+     * @return string Example: 3Y2M1D 12h10m8.1000000s
+     */
+    public static function dateIntervalToString(\DateInterval $dateDiff, string $precision = 'z'): string
+    {
+        $last = ($precision == 'm' ? 'i' : strtolower($precision));
+        if (!in_array($last, ['y', 'm', 'd', 'h', 'i', 's', 'f', 'z']))
+                return '';
+        $dateDiffArr = self::dateIntervalToArray($dateDiff);
+        if ('z' == $last) {
+            $rDateDiffArr = array_reverse($dateDiffArr);
+            $last = 'f';
+            foreach ($rDateDiffArr as $k => $v) {
+                if ($v == 0) continue;
+                else {
+                    $last = $k;
+                    break;
+                }
+            }
+        }
+        $s = 0;
+        $r = $startFr = '';
+        $sign = $dateDiff->format("%r") !== '-';
+        foreach ($dateDiffArr as $k => $v) {
+            if (!$startFr) {
+                if (0 == $v) continue;
+                else $startFr = $k;
+            }
+            if ('y' == $k) $r .= $v ? abs($v) . "Y" : "";
+            elseif ('m' == $k) $r .= $v ? abs($v) . "M" : "";
+            elseif ('d' == $k) $r .= $v ? abs($v) . "D " : "";
+            elseif ('h' == $k) $r .= $v ? abs($v) . "h" : "";
+            elseif ('i' == $k) $r .= $v ? abs($v) . "m" : "";
+            elseif ('s' == $k) $s = abs($v);
+            else $s += abs($v);
+            if ($v < 0) $sign = !$sign;
+            if ($k == strtolower($last)) break;
+        }
+        if ('f' === strtolower($precision) && 'f' === $last && 'f' === $startFr)
+                return $dateDiff->format("%fmicroseconds");
+        $sStr = ('f' === $last && 'z' !== $precision ) ? number_format($s, 6) : rtrim(rtrim(number_format($s, 6), '0'), '.') . 's';
+
+        if ('s' == $last || 'f' == $last) $r .= $sStr;
+        return trim($sign ? $r : "-$r");
+    }
+
+    protected static function dateIntervalToArray(\DateInterval $dateDiff): array
+    {
+        return [
+            'y' => $dateDiff->y,
+            'm' => $dateDiff->m,
+            'd' => $dateDiff->d,
+            'h' => $dateDiff->h,
+            'i' => $dateDiff->i,
+            's' => $dateDiff->s,
+            'f' => $dateDiff->f,
+        ];
+    }
+
     protected static function convertLine($e, $d, &$r = null, $key = null)
     {
         $r = $r ?? [];
