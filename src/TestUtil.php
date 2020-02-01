@@ -1,13 +1,12 @@
 <?php
 
-
 namespace Dat\Utils;
-
 
 use PHPUnit\Framework\TestCase;
 
 class TestUtil
 {
+
     public static function getTargetMethod($function)
     {
         return lcfirst(substr($function, 4));
@@ -40,5 +39,4 @@ class TestUtil
             TestCase::assertEquals($expR, $actR);
         }
     }
-
 }

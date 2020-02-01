@@ -1,11 +1,10 @@
 <?php
 
-
 namespace Dat\Utils;
-
 
 class BashUtil
 {
+
     /**
      * GetNumber of files by shell
      * @param $path
@@ -25,27 +24,26 @@ class BashUtil
         }
         return shell_exec($cmd);
     }
-
     /*
-        public static function rm($fileOrDir, $force = false)
-        {
+      public static function rm($fileOrDir, $force = false)
+      {
 
-            if ($force) {
-                $cmd = "rm -rf $fileOrDir";
-            } else {
-                if (is_dir($fileOrDir)) {
-                    $cmd = "rmdir $fileOrDir";
-                } else {
-                    $cmd = "rm $fileOrDir";
-                }
-            }
-            shell_exec($cmd);
-        }
-    //*/
+      if ($force) {
+      $cmd = "rm -rf $fileOrDir";
+      } else {
+      if (is_dir($fileOrDir)) {
+      $cmd = "rmdir $fileOrDir";
+      } else {
+      $cmd = "rm $fileOrDir";
+      }
+      }
+      shell_exec($cmd);
+      }
+      // */
 
     public static function p7z()
     {
-
+        
     }
 
     /**
@@ -141,7 +139,6 @@ class BashUtil
             }
         }
         return $r;
-
     }
 
     public static function ls($path)
@@ -229,7 +226,8 @@ class BashUtil
         $total = array_sum($dif);
         $total = $total > 0 ? $total : PHP_INT_MAX;
         $cpu = [];
-        foreach ($dif as $x => $y) $cpu[$x] = $y / $total;
+        foreach ($dif as $x => $y)
+            $cpu[$x] = $y / $total;
         return $cpu;
     }
 

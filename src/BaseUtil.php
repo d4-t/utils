@@ -13,6 +13,7 @@ namespace Dat\Utils;
 
 class BaseUtil
 {
+
     public static function base32Encode(string $str, bool $inputBinary = false)
     {
         if (!$inputBinary) $str = self::hex2Bin($str);
@@ -40,7 +41,6 @@ class BaseUtil
         return $r;
     }
 
-
     public static function bin2Hex(string $bin): string
     {
         $len = strlen($bin);
@@ -58,7 +58,8 @@ class BaseUtil
         if (!$str) return "";
         $str = self::base32StringCheck($str);
         $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-        for ($i = 0; $i < 32; $i++) $charmap[$chars[$i]] = $i;
+        for ($i = 0; $i < 32; $i++)
+            $charmap[$chars[$i]] = $i;
         $strarr = str_split($str);
         $buffer = $charmap[array_shift($strarr)];
         $bl = 5;  // buffer length
@@ -66,7 +67,8 @@ class BaseUtil
         while (!empty($strarr)) {
             while ($bl < 8) {
                 $buffer <<= 5;
-                if (empty($strarr)) throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . ' Invalid base32 string');
+                if (empty($strarr))
+                        throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . ' Invalid base32 string');
                 $buffer += $charmap[array_shift($strarr)];
                 $bl += 5;
             }
