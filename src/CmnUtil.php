@@ -1716,6 +1716,126 @@ class CmnUtil
         return trim($sign ? $r : "-$r");
     }
 
+    /**
+     * Get array of possible languages
+     * Available languages: zh (Chinese), jp (Japanese), kr (Korean), th (Thai), vn (Vietnamese), my (Burmese), lo (Lao), km (khmer), en (English), xx
+     * Note: "日本人" will return zh instead of jp, "nhanh" will return en instead of vn
+     * @param bool $isResultArray
+     * @return array | string
+     */
+    public static function getStrLangByUnicodeRange(string $str, bool $isResultArray = true)
+    {
+        $arr = self::getStrLangArr($str);
+        if ($isResultArray) return $arr;
+        $t = array_keys($arr, max($arr));
+        $maxKey = array_shift($t);
+        if (count($arr) < 3) {
+            return $maxKey;
+        } else {
+            $sd = self::getStdDeviationFrArr($arr);
+            if ($sd < 0.25) return 'xx';
+            $arrN = $arr;
+            unset($arrN[$maxKey]);
+            $t2 = array_keys($arrN, max($arrN));
+            $secondMaxKey = array_shift($t2);
+            if ($arr[$maxKey] - $arr[$secondMaxKey] < $sd) return 'xx';
+            return $maxKey;
+        }
+    }
+
+    /**
+     * 
+     * @param array $arr
+     * @return float
+     */
+    public static function getStdDeviationFrArr(array $arr): float
+    {
+        $size = count($arr);
+        if (0 === $size) return 0;
+        $mu = array_sum($arr) / $size;
+        $ans = 0;
+        foreach ($arr as $elem) {
+            $ans += pow(($elem - $mu), 2);
+        }
+        return sqrt($ans / $size);
+    }
+
+    /**
+     * mb safe (utf-8) str_split
+     * @param type $str
+     * @param type $len
+     * @return type
+     */
+    public static function strSplitUnicode($str, $len = 1)
+    {
+        $arr = [];
+        $length = mb_strlen($str, 'UTF-8');
+        for ($i = 0; $i < $length; $i += $len) {
+            $arr[] = mb_substr($str, $i, $len, 'UTF-8');
+        }
+        return $arr;
+    }
+
+    protected static function getStrLangArr(string $str): array
+    {
+        if (0 === mb_strlen($str)) return ['xx' => 1];
+        $r = [];
+        $langData = [
+            'sym' => '/[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/#@\s\t\n\r\\\]/',
+            'en' => '/[a-zA-Z]/u',
+            'th' => '/\p{Thai}/u',
+            'zh' => '/\p{Han}/u',
+            'my' => '/\p{Myanmar}/u',
+            'lo' => '/\p{Lao}/u',
+            'km' => '/\p{Khmer}/u',
+            'jp' => '/[\p{Hiragana}\p{Katakana}]/u',
+            'vn' => '/[àáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ]/u',
+        ];
+
+        $lm = [];
+        $chars = self::strSplitUnicode($str);
+        $len = count($chars);
+        foreach ($chars as $c) {
+            foreach ($langData as $lang => $ex) {
+                $match = preg_match($ex, $c);
+                if ($match) $lm[$lang] = isset($lm[$lang]) ? $lm[$lang] + 1 : 1;
+            }
+        }
+        $cc = $len - ($lm['sym'] ?? 0);
+        if (1 === count($lm)) {
+            ('sym' === key($lm) ) ? ($r['xx'] = 1) : ($r[key($lm)] = 1);
+            return $r;
+        } elseif (2 === count($lm) && isset($lm['sym'])) {
+            $other = $len - $lm['sym'];
+            unset($lm['sym']);
+            $other -= $lm[key($lm)];
+            $r = $other > $lm[key($lm)] ? ['xx' => 1] : [key($lm) => 1];
+            return $r;
+        }
+        foreach ($lm as $lang => $cnt) {
+            $r[$lang] = min($cnt / $cc, 1);
+        }
+        if (isset($lm['jp']) && isset($lm['zh']) && $lm['zh'] > 0) {
+            $r['jp'] = min($lm['jp'] * 20 / $cc, 1);
+            if ($lm['zh'] / $cc > $r['jp'])
+                    $r['zh'] = min($lm['zh'] / $cc - $r['jp'], 1);
+            else unset($r['zh']);
+        }
+        if (isset($lm['vn']) && isset($lm['en']) && $lm['en'] > 0) {
+            $r['vn'] = min($lm['vn'] * 10 / $cc, 1);
+            if ($lm['en'] / $cc > $r['vn'])
+                    $r['en'] = min($lm['en'] / $cc - $r['vn'], 1);
+            else unset($r['en']);
+        }
+        unset($r['sym']);
+        if (count($r) < 3) return $r;
+        $sum = array_sum($r);
+        foreach ($r as &$v) {
+            $v = ($sum ? ( $v / $sum ) : $v);
+        }
+        return $r;
+    }
+
     protected static function dateIntervalToArray(\DateInterval $dateDiff): array
     {
         return [
