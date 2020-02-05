@@ -654,6 +654,7 @@ class CmnUtilTest extends AbstractTest
 Твоё достоянье на все времена!', null, ['xx' => 1]],
             ['First sentence of Israeli National Anthem: כֹּל עוֹד בַּלֵּבָב פְּנִימָה,נֶפֶשׁ יְהוּדִי הוֹמִיָּה,', null, ['xx' => 1]],
             ['这一句是汉语', false, 'zh'],
+            ['이 문장은 한국어입니다', false, 'kr'],
             [$str0, false, 'zh'],
             [$str1, false, 'xx'],
         ];
