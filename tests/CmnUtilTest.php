@@ -713,6 +713,32 @@ class CmnUtilTest extends AbstractTest
      * 
      * @param type $country
      * @param type $er
+     * @dataProvider providerGetAllCountryCodes
+     */
+    public function testGetAllCountryCodes($country, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = [];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals(in_array($country, $r), $er);
+        self::assertEquals(count($r), 247);
+    }
+
+    public function providerGetAllCountryCodes()
+    {
+        return [
+            ['CN', true],
+            ['US', true],
+            ['FR', true],
+            ['TH', true], // countries exist
+            ['ZZ', false], // countries do not exist
+        ];
+    }
+
+    /**
+     * 
+     * @param type $country
+     * @param type $er
      * @dataProvider providerGetAllCountries
      */
     public function testGetAllCountries($country, $er)
@@ -721,16 +747,84 @@ class CmnUtilTest extends AbstractTest
         $testCase = [];
         $r = call_user_func_array($fullMethodName, $testCase);
         self::assertEquals(in_array($country, $r), $er);
+        self::assertEquals(count($r), 247);
     }
 
     public function providerGetAllCountries()
     {
         return [
-            ['CN', true],
-            ['US', true],
-            ['FR', true],
-            ['TH', true], // countries exist
-            ['ZZ', false], // countries do not exist
+            ['China', true],
+            ['United States', true],
+            ['UnitedStates', false],
+        ];
+    }
+
+    /**
+     * 
+     * @param type $code
+     * @param type $er
+     * @dataProvider providerGetCountryNameByCode
+     */
+    public function testGetCountryNameByCode($code, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = [$code];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($r, $er);
+    }
+
+    public function providerGetCountryNameByCode()
+    {
+        return[
+            ['CN', 'China'],
+            ['US', 'United States'],
+            ['ZZ', ''],
+        ];
+    }
+
+    /**
+     * 
+     * @param type $name
+     * @param type $er
+     * @dataProvider providerGetCountryCodeByName
+     */
+    public function testGetCountryCodeByName($name, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = [$name];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($r, $er);
+    }
+
+    public function providerGetCountryCodeByName()
+    {
+        return[
+            ['China', 'CN'],
+            ['United States', 'US'],
+            ['Not a Country', ''],
+        ];
+    }
+
+    /**
+     * 
+     * @param type $code
+     * @param type $er
+     * @dataProvider providerGetAllLocalesFrCountry
+     */
+    public function testGetAllLocalesFrCountry($code, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = [$code];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($r, $er);
+    }
+
+    public function providerGetAllLocalesFrCountry()
+    {
+        return[
+            ['TH', ['th_TH']],
+            ['CA', ['en_CA', 'fr_CA']],
+            ['CN', ['bo_CN', 'ii_CN', 'ug_CN', 'yue_Hans_CN', 'zh_Hans_CN']],
         ];
     }
 }

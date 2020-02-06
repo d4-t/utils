@@ -1777,7 +1777,22 @@ class CmnUtil
     }
 
     /**
-     * 
+     * Get all country codes (alpha2) from php locales
+     * @return array
+     */
+    public static function getAllCountryCodes(): array
+    {
+        $locales = \ResourceBundle::getLocales('');
+        $r = [];
+        foreach ($locales as $locale) {
+            $c = \Locale::getRegion($locale);
+            if (2 === strlen($c)) $r[] = $c;
+        }
+        return array_values(array_unique($r));
+    }
+
+    /**
+     * Get all countries from php locales
      * @return array
      */
     public static function getAllCountries()
@@ -1785,13 +1800,54 @@ class CmnUtil
         $locales = \ResourceBundle::getLocales('');
         $r = [];
         foreach ($locales as $locale) {
-            $d = explode('_', $locale);
-            if (count($d) > 1) {
-                $c = array_pop($d);
-                if (2 === strlen($c)) $r[] = $c;
+            $c = \Locale::getRegion($locale);
+            if (2 === strlen($c)) {
+                $r[$c] = \Locale::getDisplayRegion($locale);
             }
         }
-        return array_values(array_unique($r));
+        ksort($r);
+        return $r;
+    }
+
+    /**
+     * 
+     * @param string $alpha2
+     * @return string empty if unknown
+     */
+    public static function getCountryNameByCode(string $alpha2): string
+    {
+        $r = \Locale::getDisplayRegion("-$alpha2");
+        return $r === "Unknown Region" ? "" : $r;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @return string (alpha2)
+     */
+    public static function getCountryCodeByName(string $name): string
+    {
+        $countries = self::getAllCountries();
+        foreach ($countries as $code => $country) {
+            if ($country === $name) return $code;
+        }
+        return "";
+    }
+
+    /**
+     * Get all possible locales by alpha 2 country code
+     * @param string $alpha2
+     * @return array
+     */
+    public static function getAllLocalesFrCountry(string $alpha2): array
+    {
+        if (2 !== strlen($alpha2)) return [];
+        $locales = \ResourceBundle::getLocales('');
+        $r = [];
+        foreach ($locales as $locale) {
+            if ($alpha2 === \Locale::getRegion($locale)) $r[] = $locale;
+        }
+        return $r;
     }
 
     protected static function getStrLangArr(string $str): array
