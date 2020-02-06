@@ -708,4 +708,29 @@ class CmnUtilTest extends AbstractTest
             [[], 0],
         ];
     }
+
+    /**
+     * 
+     * @param type $country
+     * @param type $er
+     * @dataProvider providerGetAllCountries
+     */
+    public function testGetAllCountries($country, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = [];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals(in_array($country, $r), $er);
+    }
+
+    public function providerGetAllCountries()
+    {
+        return [
+            ['CN', true],
+            ['US', true],
+            ['FR', true],
+            ['TH', true], // countries exist
+            ['ZZ', false], // countries do not exist
+        ];
+    }
 }

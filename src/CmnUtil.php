@@ -1776,6 +1776,24 @@ class CmnUtil
         return $arr;
     }
 
+    /**
+     * 
+     * @return array
+     */
+    public static function getAllCountries()
+    {
+        $locales = \ResourceBundle::getLocales('');
+        $r = [];
+        foreach ($locales as $locale) {
+            $d = explode('_', $locale);
+            if (count($d) > 1) {
+                $c = array_pop($d);
+                if (2 === strlen($c)) $r[] = $c;
+            }
+        }
+        return array_values(array_unique($r));
+    }
+
     protected static function getStrLangArr(string $str): array
     {
         if (0 === mb_strlen($str)) return ['xx' => 1];
