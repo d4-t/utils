@@ -18,6 +18,7 @@ class CmnUtil
     const LOGTYPE_DEBUG = 2;
     const LOGTYPE_ERROR = 3;
     const TEST = 0;
+    const LANG_UNKNOWN = '--';
 
     /**
      * show a status bar in the console
@@ -78,11 +79,6 @@ class CmnUtil
         // when done, send a newline
         if ($done == $total) echo PHP_EOL;
     }
-//    function progress_bar($done, $total, $info="", $width=50) {
-//        $perc = round(($done * 100) / $total);
-//        $bar = round(($width * $perc) / 100);
-//        return sprintf("%s%%[%s>%s]%s\r", $perc, str_repeat("=", $bar), str_repeat(" ", $width-$bar), $info);
-//    }
 
     /**
      *
@@ -1718,7 +1714,7 @@ class CmnUtil
 
     /**
      * Get array of possible languages
-     * Available languages: zh (Chinese), jp (Japanese), kr (Korean), th (Thai), vn (Vietnamese), my (Burmese), lo (Lao), km (khmer), en (English), xx
+     * Available languages: zh (Chinese), jp (Japanese), kr (Korean), th (Thai), vn (Vietnamese), my (Burmese), lo (Lao), km (khmer), en (English), self::LANG_UNKNOWN
      * Note: "日本人" will return zh instead of jp, "nhanh" will return en instead of vn
      * @param bool $isResultArray
      * @return array | string
@@ -1733,12 +1729,13 @@ class CmnUtil
             return $maxKey;
         } else {
             $sd = self::getStdDeviationFrArr($arr);
-            if ($sd < 0.25) return 'xx';
+            if ($sd < 0.25) return self::LANG_UNKNOWN;
             $arrN = $arr;
             unset($arrN[$maxKey]);
             $t2 = array_keys($arrN, max($arrN));
             $secondMaxKey = array_shift($t2);
-            if ($arr[$maxKey] - $arr[$secondMaxKey] < $sd) return 'xx';
+            if ($arr[$maxKey] - $arr[$secondMaxKey] < $sd)
+                    return self::LANG_UNKNOWN;
             return $maxKey;
         }
     }
@@ -1852,7 +1849,7 @@ class CmnUtil
 
     protected static function getStrLangArr(string $str): array
     {
-        if (0 === mb_strlen($str)) return ['xx' => 1];
+        if (0 === mb_strlen($str)) return [self::LANG_UNKNOWN => 1];
         $r = [];
         $langData = [
             'sym' => '/[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/#@\s\t\n\r\\\]/',
@@ -1878,13 +1875,13 @@ class CmnUtil
         }
         $cc = $len - ($lm['sym'] ?? 0);
         if (1 === count($lm)) {
-            ('sym' === key($lm) ) ? ($r['xx'] = 1) : ($r[key($lm)] = 1);
+            ('sym' === key($lm) ) ? ($r[self::LANG_UNKNOWN] = 1) : ($r[key($lm)] = 1);
             return $r;
         } elseif (2 === count($lm) && isset($lm['sym'])) {
             $other = $len - $lm['sym'];
             unset($lm['sym']);
             $other -= $lm[key($lm)];
-            $r = $other > $lm[key($lm)] ? ['xx' => 1] : [key($lm) => 1];
+            $r = $other > $lm[key($lm)] ? [self::LANG_UNKNOWN => 1] : [key($lm) => 1];
             return $r;
         }
         foreach ($lm as $lang => $cnt) {
@@ -2052,7 +2049,6 @@ class CmnUtil
             $r .= $s[1]; // First line finish here
             $depth = min(self::getArrayDepth($h), $d);
             $r .= self::createTableHeader1($h, $s, $depth);
-//            }
         } else {
             $r = $s[0] . self::strPad("", $h + 2, $s[9]) . $s[1];
         }

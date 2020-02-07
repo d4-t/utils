@@ -511,7 +511,7 @@ class CmnUtilTest extends AbstractTest
     {
         return [
             ['\Dat\Utils\CmnUtil', 'LOGTYPE', [CmnUtil::LOGTYPE_NOTICE, CmnUtil::LOGTYPE_WARNING, CmnUtil::LOGTYPE_DEBUG, CmnUtil::LOGTYPE_ERROR]],
-            ['\Dat\Utils\CmnUtil', '', [CmnUtil::LOGTYPE_NOTICE, CmnUtil::LOGTYPE_WARNING, CmnUtil::LOGTYPE_DEBUG, CmnUtil::LOGTYPE_ERROR, CmnUtil::TEST]],
+            ['\Dat\Utils\CmnUtil', '', [CmnUtil::LOGTYPE_NOTICE, CmnUtil::LOGTYPE_WARNING, CmnUtil::LOGTYPE_DEBUG, CmnUtil::LOGTYPE_ERROR, CmnUtil::TEST, CmnUtil::LANG_UNKNOWN]],
         ];
     }
 
@@ -637,7 +637,7 @@ class CmnUtilTest extends AbstractTest
         $str0 = '雪の断章 简介：Yurose Hirose遇到了一个7岁的女孩Iori，她是一个孤儿，将她带回了她的公寓。 Yuichi拜访了Namba一家，以抓住陷入了人类不信任的她。 在东京拥有房屋的汤一（Yuichi）已转移到札幌上班，管家凯恩（Kane）照顾他的照料。 尽管凯恩不同意，但佑一还是决定在他最好的朋友对马大介的鼓励下抚养八神。 十年过去了，八神现年17岁。 Yuichi试图让Iori接受北海道大学的录取。 在她的高中里，还有难波家族的第二个女儿佐吉子，她也想接受北海道大学的录取。 难波家族的长女尤科（Yuko）已搬到尤织（Iori）居住的寓所。 Yuko的欢迎晚宴是由公寓的居民举行的，她在那里进行了华丽的舞蹈，然后将她拉到自己的房间。';
         $str1 = 'This is English example,This is English example,This is English example,This is English example,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,这一句是汉语,私は日本人です,câu này là tiếng việt,หนังสือพิมพ์ไทย,';
         return [
-            ['~`!@#$%^&*()[]\\{}|;\':",./<>?-=_+', null, ['xx' => 1]],
+            ['~`!@#$%^&*()[]\\{}|;\':",./<>?-=_+', null, [CmnUtil::LANG_UNKNOWN => 1]],
             ['This is English example', null, ['en' => 1]],
             ['หนังสือพิมพ์ไทย', null, ['th' => 1]],
             ['这一句是汉语', null, ['zh' => 1]],
@@ -651,12 +651,12 @@ class CmnUtilTest extends AbstractTest
             ['Россия – священная наша держава,
 Россия – любимая наша страна.
 Могучая воля, великая слава –
-Твоё достоянье на все времена!', null, ['xx' => 1]],
-            ['First sentence of Israeli National Anthem: כֹּל עוֹד בַּלֵּבָב פְּנִימָה,נֶפֶשׁ יְהוּדִי הוֹמִיָּה,', null, ['xx' => 1]],
+Твоё достоянье на все времена!', null, [CmnUtil::LANG_UNKNOWN => 1]],
+            ['First sentence of Israeli National Anthem: כֹּל עוֹד בַּלֵּבָב פְּנִימָה,נֶפֶשׁ יְהוּדִי הוֹמִיָּה,', null, [CmnUtil::LANG_UNKNOWN => 1]],
             ['这一句是汉语', false, 'zh'],
             ['이 문장은 한국어입니다', false, 'kr'],
             [$str0, false, 'zh'],
-            [$str1, false, 'xx'],
+            [$str1, false, CmnUtil::LANG_UNKNOWN],
         ];
     }
 
