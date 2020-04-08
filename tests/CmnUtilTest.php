@@ -409,6 +409,12 @@ class CmnUtilTest extends AbstractTest
         $hex = '4ed5fc85d4690f5b82c0137ed1c215cb0b5b8516';
         $r = call_user_func_array($fullMethodName, [$code]);
         self::assertEquals($hex, $r);
+
+
+        $code = '';
+        $hex = '';
+        $r = call_user_func_array($fullMethodName, [$code]);
+        self::assertEquals($hex, $r);
     }
 
     public function testBin2Hex()
@@ -545,11 +551,10 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $url
      * @param type $er
      * @dataProvider providerGetGetParamFrUrl
-
      */
     public function testGetGetParamFrUrl($url, $er)
     {
@@ -564,21 +569,22 @@ class CmnUtilTest extends AbstractTest
     {
         return [
             ["//maps.googleapis.com/maps/api/staticmap?center=13.77148527637,100.49234518194&zoom=16&size=378x250&maptype=roadmap&markers=color:red%7Clabel:C%7C13.77148527637,100.49234518194&key=AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A", [
-                    'center' => '13.77148527637,100.49234518194',
-                    'zoom' => '16',
-                    'size' => '378x250',
-                    'maptype' => 'roadmap',
-                    'markers' => 'color:red%7Clabel:C%7C13.77148527637,100.49234518194',
-                    'key' => 'AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A'
-                ]],
+                'center' => '13.77148527637,100.49234518194',
+                'zoom' => '16',
+                'size' => '378x250',
+                'maptype' => 'roadmap',
+                'markers' => 'color:red|label:C|13.77148527637,100.49234518194',
+                'key' => 'AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A'
+            ]],
             ["http://g.cn/?a=1&b=2&c", ['a' => 1, 'b' => 2, 'c' => true]],
             ["http://g.cn/?a=1&b=2=3&c", ['a' => 1, 'c' => true]],
             ['?a=b', ['a' => 'b']],
+            ['?a=%C3%85', ['a' => 'Å']],
         ];
     }
 
     /**
-     * 
+     *
      * @param type $dateDiff
      * @param type $precision
      * @param type $er
@@ -600,7 +606,7 @@ class CmnUtilTest extends AbstractTest
         $di1->invert = 1;
         $di2 = \DateInterval::createFromDateString('-1000 microsecond');
         $di2->invert = 1;
-        return[
+        return [
             [$di, null, "-3Y2M1D 12h10m8s"],
             [$di1, null, "1M3D 5h"],
             [$di2, null, "0.001s"],
@@ -618,7 +624,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $str
      * @param type $isResultArray
      * @param type $er
@@ -661,7 +667,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $str
      * @param type $er
      * @dataProvider providerStrSplitUnicode
@@ -683,7 +689,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $arr
      * @param type $er
      * @dataProvider providerGetStdDeviationFrArr
@@ -710,7 +716,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $country
      * @param type $er
      * @dataProvider providerGetAllCountryCodes
@@ -736,7 +742,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $country
      * @param type $er
      * @dataProvider providerGetAllCountries
@@ -760,7 +766,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $code
      * @param type $er
      * @dataProvider providerGetCountryNameByCode
@@ -775,7 +781,7 @@ class CmnUtilTest extends AbstractTest
 
     public function providerGetCountryNameByCode()
     {
-        return[
+        return [
             ['CN', 'China'],
             ['US', 'United States'],
             ['ZZ', ''],
@@ -783,7 +789,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $name
      * @param type $er
      * @dataProvider providerGetCountryCodeByName
@@ -798,7 +804,7 @@ class CmnUtilTest extends AbstractTest
 
     public function providerGetCountryCodeByName()
     {
-        return[
+        return [
             ['China', 'CN'],
             ['United States', 'US'],
             ['Not a Country', ''],
@@ -806,7 +812,7 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
-     * 
+     *
      * @param type $code
      * @param type $er
      * @dataProvider providerGetAllLocalesFrCountry
@@ -821,10 +827,35 @@ class CmnUtilTest extends AbstractTest
 
     public function providerGetAllLocalesFrCountry()
     {
-        return[
+        return [
             ['TH', ['th_TH']],
             ['CA', ['en_CA', 'fr_CA']],
             ['CN', ['bo_CN', 'ii_CN', 'ug_CN', 'yue_Hans_CN', 'zh_Hans_CN']],
+        ];
+    }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerEncodeUrlParam
+     */
+    public function testEncodeUrlParam($i, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $testCase = [$i];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($r, $er);
+    }
+
+    public function providerEncodeUrlParam()
+    {
+        return [
+            [['a' => 'b'], '?a=b'],
+            [['a' => 'b', 'c' => 'd'], '?a=b&c=d'],
+            [['a' => 'b', 'c' => 'd E'], '?a=b&c=d%20E'],
+            [['a' => 'Å'], '?a=%C3%85'],
+            [['a' => 1, 'b' => 2, 'c' => true], "?a=1&b=2&c",],
+            [['a' => 1, 'c' => true], "?a=1&c"],
         ];
     }
 }

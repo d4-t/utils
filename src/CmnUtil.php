@@ -318,9 +318,9 @@ class CmnUtil
         $bgColors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47',);
         $cString = "";
         if (isset($fgColors[$fgColor]))
-                $cString .= "\033[" . $fgColors[$fgColor] . "m";
+            $cString .= "\033[" . $fgColors[$fgColor] . "m";
         if (isset($bgColors[$bgColor]))
-                $cString .= "\033[" . $bgColors[$bgColor] . "m";
+            $cString .= "\033[" . $bgColors[$bgColor] . "m";
         $cString .= $string . "\033[0m";
         return $cString;
     }
@@ -392,7 +392,7 @@ class CmnUtil
     public static function findMissingInGroupArray($groupArr)
     {
         if (!is_array($groupArr))
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
         $all = array();
         foreach ($groupArr as $arr) {
             $tmp = range($arr['head'], $arr['tail']);
@@ -414,7 +414,7 @@ class CmnUtil
     public static function maxInGroupArray($groupArr)
     {
         if (!is_array($groupArr))
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
         $all = array();
         foreach ($groupArr as $arr) {
             $tmp = range($arr['head'], $arr['tail']);
@@ -434,15 +434,15 @@ class CmnUtil
     public static function decodeIo($io)
     {
         if (!is_string($io))
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
         if (strlen($io) > 2 || strlen($io) == 0)
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
         $io = strtolower($io);
         $input = substr($io, 0, 1);
         $output = substr($io, -1);
         $ioList = array('h', 'd', 'b', 'i', 'f', 's', 'n');
         if (!in_array($input, $ioList) || !in_array($output, $ioList))
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() meet invalid input. Input: $input, Output: $output");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() meet invalid input. Input: $input, Output: $output");
         $r['input'] = $input;
         $r['output'] = $output;
         return $r;
@@ -458,9 +458,9 @@ class CmnUtil
     public static function encodeIo($ioArr)
     {
         if (!isset($ioArr['input']) || !isset($ioArr['output']))
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
         if (strlen($ioArr['input']) !== 1 || strlen($ioArr['output']) !== 1)
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
         return $ioArr['input'] . $ioArr['output'];
     }
 
@@ -474,7 +474,7 @@ class CmnUtil
     {
         if (is_array($pieces)) return implode($glue, $pieces);
         elseif (is_object($pieces))
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " invalid arguemnt");
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " invalid arguemnt");
         else return $pieces;
     }
 
@@ -593,13 +593,13 @@ class CmnUtil
                 $r = (string)(int)$line === $line;
                 if ($r) return (int)$line;
                 else
-                        return self::getInput("An integer is required, please try again:", $dataType, $default);
+                    return self::getInput("An integer is required, please try again:", $dataType, $default);
             case "multi_int":
             case "multiInt":
                 $arr = array_map('trim', explode(',', $line));
                 foreach ($arr as $num) {
                     if ((string)(int)$num !== $num)
-                            return self::getInput("Integers are required, please try again:", $dataType, $default);
+                        return self::getInput("Integers are required, please try again:", $dataType, $default);
                 }
                 return $arr;
             case "multi_str":
@@ -615,7 +615,7 @@ class CmnUtil
                 $r = floatval($line);
                 if ($r) return (double)$line;
                 else
-                        return self::getInput("An real number is required, please try again:", $dataType, $default);
+                    return self::getInput("An real number is required, please try again:", $dataType, $default);
             case "str":
             case "string":
             default:
@@ -671,7 +671,7 @@ class CmnUtil
         if (in_array($test, $trueArray)) return true;
         elseif (in_array($test, $falseArray)) return false;
         else
-                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . '() invalid input boolean string');
+            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . '() invalid input boolean string');
     }
 
     /**
@@ -861,7 +861,7 @@ class CmnUtil
         flush();
         ob_end_clean();
         if ($fReturnStatus)
-                return $fs == filesize($localfile) || $fs == "unknown";
+            return $fs == filesize($localfile) || $fs == "unknown";
     }
 
     /**
@@ -910,11 +910,11 @@ class CmnUtil
     public static function humanFileSize($size, $unit = "")
     {
         if ((!$unit && $size >= 1 << 30) || $unit == "GB")
-                return number_format($size / (1 << 30), 2) . "GB";
+            return number_format($size / (1 << 30), 2) . "GB";
         if ((!$unit && $size >= 1 << 20) || $unit == "MB")
-                return number_format($size / (1 << 20), 2) . "MB";
+            return number_format($size / (1 << 20), 2) . "MB";
         if ((!$unit && $size >= 1 << 10) || $unit == "KB")
-                return number_format($size / (1 << 10), 2) . "KB";
+            return number_format($size / (1 << 10), 2) . "KB";
         return number_format($size) . " bytes";
     }
 
@@ -1125,12 +1125,12 @@ class CmnUtil
     {
         if (is_string($input)) return $input;
         if (!is_array($input))
-                self::error("Help text must be string or array!", '', 1);
+            self::error("Help text must be string or array!", '', 1);
         $r = '';
         foreach ($input as $k => $v) {
             if ($k === 0) $r .= $v;
             elseif (is_numeric($k))
-                    $r .= PHP_EOL . "    -param " . ($k - 1) . " : " . $v;
+                $r .= PHP_EOL . "    -param " . ($k - 1) . " : " . $v;
             else $r .= PHP_EOL . "    -$k : " . $v;
         }
         return $r;
@@ -1651,29 +1651,29 @@ class CmnUtil
     {
         $r = [];
         if (strpos($url, '?') === false) return $r;
-        $trimedUrl = substr($url, strpos($url, '?') + 1);
-        $arr = explode('&', $trimedUrl);
+        $trimmedUrl = substr($url, strpos($url, '?') + 1);
+        $arr = explode('&', $trimmedUrl);
         foreach ($arr as $line) {
             $lineArr = explode('=', $line);
             if (count($lineArr) > 2) continue;
-            $r[$lineArr[0]] = $lineArr[1] ?? true;
+            $r[$lineArr[0]] = isset($lineArr[1]) ? rawurldecode($lineArr[1]) : true;
         }
         return $r;
     }
 
     /**
-     * 
+     *
      * @param DateInterval $dateDiff
      * @param string $precision Note: M for month, m for minute
      *      Suggested value Y,M,D,h,i,s,f,z z for round up value
-     *      Allowed value: Y,M,D,H,I,S,F,y,m,d,h,i,s,z 
+     *      Allowed value: Y,M,D,H,I,S,F,y,m,d,h,i,s,z
      * @return string Example: 3Y2M1D 12h10m8.1000000s
      */
     public static function dateIntervalToString(\DateInterval $dateDiff, string $precision = 'z'): string
     {
         $last = ($precision == 'm' ? 'i' : strtolower($precision));
         if (!in_array($last, ['y', 'm', 'd', 'h', 'i', 's', 'f', 'z']))
-                return '';
+            return '';
         $dateDiffArr = self::dateIntervalToArray($dateDiff);
         if ('z' == $last) {
             $rDateDiffArr = array_reverse($dateDiffArr);
@@ -1705,8 +1705,8 @@ class CmnUtil
             if ($k == strtolower($last)) break;
         }
         if ('f' === strtolower($precision) && 'f' === $last && 'f' === $startFr)
-                return $dateDiff->format("%fmicroseconds");
-        $sStr = ('f' === $last && 'z' !== $precision ) ? number_format($s, 6) : rtrim(rtrim(number_format($s, 6), '0'), '.') . 's';
+            return $dateDiff->format("%fmicroseconds");
+        $sStr = ('f' === $last && 'z' !== $precision) ? number_format($s, 6) : rtrim(rtrim(number_format($s, 6), '0'), '.') . 's';
 
         if ('s' == $last || 'f' == $last) $r .= $sStr;
         return trim($sign ? $r : "-$r");
@@ -1735,13 +1735,13 @@ class CmnUtil
             $t2 = array_keys($arrN, max($arrN));
             $secondMaxKey = array_shift($t2);
             if ($arr[$maxKey] - $arr[$secondMaxKey] < $sd)
-                    return self::LANG_UNKNOWN;
+                return self::LANG_UNKNOWN;
             return $maxKey;
         }
     }
 
     /**
-     * 
+     *
      * @param array $arr
      * @return float
      */
@@ -1807,7 +1807,7 @@ class CmnUtil
     }
 
     /**
-     * 
+     *
      * @param string $alpha2
      * @return string empty if unknown
      */
@@ -1818,7 +1818,7 @@ class CmnUtil
     }
 
     /**
-     * 
+     *
      * @param string $name
      * @return string (alpha2)
      */
@@ -1845,6 +1845,24 @@ class CmnUtil
             if ($alpha2 === \Locale::getRegion($locale)) $r[] = $locale;
         }
         return $r;
+    }
+
+    /**
+     * Encode get part of url with input arrray
+     * @param array $params
+     * @return string
+     */
+    public static function encodeUrlParam(array $params): string
+    {
+        $r = '';
+        $i = 0;
+        foreach ($params as $k => $v) {
+            $r .= $i++ ? '&' : '?';
+            $r .= self::encodeUrlOnlySpecial($k);
+            $r .= true === $v ? '' : ('=' . self::encodeUrlOnlySpecial($v));
+        }
+        return $r;
+
     }
 
     protected static function getStrLangArr(string $str): array
@@ -1875,7 +1893,7 @@ class CmnUtil
         }
         $cc = $len - ($lm['sym'] ?? 0);
         if (1 === count($lm)) {
-            ('sym' === key($lm) ) ? ($r[self::LANG_UNKNOWN] = 1) : ($r[key($lm)] = 1);
+            ('sym' === key($lm)) ? ($r[self::LANG_UNKNOWN] = 1) : ($r[key($lm)] = 1);
             return $r;
         } elseif (2 === count($lm) && isset($lm['sym'])) {
             $other = $len - $lm['sym'];
@@ -1890,20 +1908,20 @@ class CmnUtil
         if (isset($lm['jp']) && isset($lm['zh']) && $lm['zh'] > 0) {
             $r['jp'] = min($lm['jp'] * 20 / $cc, 1);
             if ($lm['zh'] / $cc > $r['jp'])
-                    $r['zh'] = min($lm['zh'] / $cc - $r['jp'], 1);
+                $r['zh'] = min($lm['zh'] / $cc - $r['jp'], 1);
             else unset($r['zh']);
         }
         if (isset($lm['vn']) && isset($lm['en']) && $lm['en'] > 0) {
             $r['vn'] = min($lm['vn'] * 10 / $cc, 1);
             if ($lm['en'] / $cc > $r['vn'])
-                    $r['en'] = min($lm['en'] / $cc - $r['vn'], 1);
+                $r['en'] = min($lm['en'] / $cc - $r['vn'], 1);
             else unset($r['en']);
         }
         unset($r['sym']);
         if (count($r) < 3) return $r;
         $sum = array_sum($r);
         foreach ($r as &$v) {
-            $v = ($sum ? ( $v / $sum ) : $v);
+            $v = ($sum ? ($v / $sum) : $v);
         }
         return $r;
     }

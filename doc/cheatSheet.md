@@ -340,7 +340,7 @@ sudo mount -t vboxsf D_DRIVE /media/sf_D_DRIVE/
 ```
 sudo apt install lamp-server^  
 sudo mysql_secure_installation  
-sudo apt install openssl php7.2-bcmath php7.2-curl php7.2-gd php7.2-intl php7.2-mbstring php7.2-mysql php7.2-xml php7.2-soap php7.2-zip  
+sudo apt install openssl php7.2-bcmath php7.2-curl php7.2-gd php7.2-intl php7.2-mbstring php7.2-mysql php7.2-xml php7.2-soap php7.2-zip imagemagick
 sudo a2enmod rewrite
 ```
 # Image processing
@@ -361,4 +361,9 @@ echo -e "Test email" | mail -a From:"admin@yesijoin.com" -s "Test subject" test@
 or
 ```
 date=”$(date)” ; echo -e "Test email ${date}" | mail -a From:"admin@yesijoin.com" -s "Test subject" test@yesijoin.com
+```
+# PHP
+trace calling method
+```php
+\Dat\Utils\CmnUtil::debug(debug_backtrace()[1]['class'].'::'.debug_backtrace()[1]['function'],__FUNCTION__);
 ```
