@@ -1350,7 +1350,7 @@ class CmnUtil
     {
         $str_len = mb_strlen($str);
         $pad_str_len = mb_strlen($pad_str);
-        if (!$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
+        if (0 !== $str_len && !$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
             $str_len = 1; // @debug
         }
         if (!$pad_len || !$pad_str_len || $pad_len <= $str_len) {
@@ -1362,12 +1362,11 @@ class CmnUtil
             $repeat = ceil($length / $pad_str_len);
             $result = mb_substr(str_repeat($pad_str, $repeat), 0, floor($length)) . $str . mb_substr(str_repeat($pad_str, $repeat), 0, ceil($length));
         } else {
-            $repeat = ceil($str_len - $pad_str_len + $pad_len);
             if ($dir == STR_PAD_RIGHT) {
-                $result = $str . str_repeat($pad_str, $repeat);
+                $result = $str . str_repeat($pad_str, $pad_len);
                 $result = mb_substr($result, 0, $pad_len);
             } else if ($dir == STR_PAD_LEFT) {
-                $result = str_repeat($pad_str, $repeat);
+                $result = str_repeat($pad_str, $pad_len);
                 $result = mb_substr($result, 0, $pad_len - (($str_len - $pad_str_len) + $pad_str_len)) . $str;
             }
         }
@@ -2152,6 +2151,12 @@ class CmnUtil
         $true = "TRUE";
         $false = "FALSE";
         $null = "NULL";
+//        if ('' === $e) {
+//            CmnUtil::debug($w);
+//            $t = self::strPad($e, $w, " ");
+//            CmnUtil::debug("++$t++", 't');
+//        }
+
         if (is_string($e)) {
             return self::strPad($e, $w, " ");
         } elseif (is_numeric($e)) {

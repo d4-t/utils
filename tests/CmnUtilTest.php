@@ -277,6 +277,16 @@ class CmnUtilTest extends AbstractTest
 +-----+-----+------+';
         $r = call_user_func_array($fullMethodName, [$arr, 0, 2]);
         self::assertEquals($er, $r);
+
+        $arr = [['lang' => 'en', 'a' => 1], ['lang' => 'th', 'a' => '']];
+        $er = '+-----+------+---+
+| key | lang | a |
++-----+------+---+
+|   0 | en   | 1 |
+|   1 | th   |   |
++-----+------+---+';
+        $r = call_user_func_array($fullMethodName, [$arr, 0, 2]);
+        self::assertEquals($er, $r);
     }
 
     public function testIsArrayAssoc()
@@ -776,7 +786,7 @@ class CmnUtilTest extends AbstractTest
         $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
         $testCase = [$code];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($r, $er);
+        self::assertEquals($er, $r);
     }
 
     public function providerGetCountryNameByCode()
@@ -799,7 +809,7 @@ class CmnUtilTest extends AbstractTest
         $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
         $testCase = [$name];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($r, $er);
+        self::assertEquals($er, $r);
     }
 
     public function providerGetCountryCodeByName()
@@ -822,7 +832,7 @@ class CmnUtilTest extends AbstractTest
         $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
         $testCase = [$code];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($r, $er);
+        self::assertEquals($er, $r);
     }
 
     public function providerGetAllLocalesFrCountry()
@@ -844,7 +854,7 @@ class CmnUtilTest extends AbstractTest
         $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
         $testCase = [$i];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($r, $er);
+        self::assertEquals($er, $r);
     }
 
     public function providerEncodeUrlParam()
@@ -856,6 +866,28 @@ class CmnUtilTest extends AbstractTest
             [['a' => 'Å'], '?a=%C3%85'],
             [['a' => 1, 'b' => 2, 'c' => true], "?a=1&b=2&c",],
             [['a' => 1, 'c' => true], "?a=1&c"],
+        ];
+    }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerStrPad
+     */
+    public function testStrPad($i, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $r = call_user_func_array($fullMethodName, $i);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerStrPad()
+    {
+        return [
+            [['', 1], ' '],
+            [['', 1, ' ', STR_PAD_LEFT], ' '],
+            [['a', 2], 'a '],
+            [['a', 2, '*', STR_PAD_LEFT], '*a'],
         ];
     }
 }
