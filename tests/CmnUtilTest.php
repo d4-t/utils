@@ -890,4 +890,29 @@ class CmnUtilTest extends AbstractTest
             [['a', 2, '*', STR_PAD_LEFT], '*a'],
         ];
     }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerGetBoolFrStr
+     */
+    public function testGetBoolFrStr($i, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $r = call_user_func_array($fullMethodName, $i);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerGetBoolFrStr()
+    {
+        return [
+            [['true'], true],
+            [['false'], false],
+            [['f'], false],
+            [['F'], false],
+            [['n'], false],
+            [['0'], false],
+            [['1'], true],
+        ];
+    }
 }

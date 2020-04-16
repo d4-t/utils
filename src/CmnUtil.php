@@ -663,10 +663,10 @@ class CmnUtil
      * @return boolean
      * @throws \Exception if input string is not recogniazble
      */
-    public static function getBoolFrStr($string)
+    public static function getBoolFrStr(string $string)
     {
-        $trueArray = ['T', 't', 'Y', 'y', 'True', 'TRUE', 'true', 'Yes', 'YES', 'yes', 'ok', 'yep', 'yeah'];
-        $falseArray = ['F', 'f', 'N', 'n', 'False', 'FALSE', 'false', 'No', 'NO', 'no', 'nope', 'na', 'nada'];
+        $trueArray = ['T', 't', 'Y', 'y', 'True', 'TRUE', 'true', 'Yes', 'YES', 'yes', 'ok', 'yep', 'yeah', '1'];
+        $falseArray = ['F', 'f', 'N', 'n', 'False', 'FALSE', 'false', 'No', 'NO', 'no', 'nope', 'na', 'nada', '0'];
         $test = trim($string);
         if (in_array($test, $trueArray)) return true;
         elseif (in_array($test, $falseArray)) return false;
