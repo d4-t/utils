@@ -325,41 +325,6 @@ class CmnUtil
         return $cString;
     }
 
-    public static function red($str)
-    {
-        return self::getColoredString($str, 'red');
-    }
-
-    public static function green($str)
-    {
-        return self::getColoredString($str, 'green');
-    }
-
-    public static function brown($str)
-    {
-        return self::getColoredString($str, 'brown');
-    }
-
-    public static function yellow($str)
-    {
-        return self::getColoredString($str, 'yellow');
-    }
-
-    public static function blue($str)
-    {
-        return self::getColoredString($str, 'blue');
-    }
-
-    public static function cyan($str)
-    {
-        return self::getColoredString($str, 'cyan');
-    }
-
-    public static function lcyan($str)
-    {
-        return self::getColoredString($str, 'light_cyan');
-    }
-
     /**
      * Return Scientific format of given float number
      * @param float $float a float number
@@ -379,6 +344,47 @@ class CmnUtil
             $num = preg_match("/\./", $num) ? substr((string)$num, 0, $s + 1) : $num;
         }
         return $num . $pStr;
+    }
+
+    /**
+     * Return string format of number with given significant digits
+     *
+     * @param $number
+     * @param int $digits
+     * @param bool $isStrict
+     * @return string
+     */
+    public static function formatSignificantDigits($number, int $digits = 2, bool $isStrict = true)
+    {
+        if (!$isStrict) $digits = (int)$number ? strlen((string)(int)$number) : self::getSignificantDigits($number);
+        if ($number == 0) {
+            $decimalPlaces = $digits - 1;
+        } elseif ($number < 0) {
+            $decimalPlaces = $digits - floor(log10($number * -1)) - 1;
+        } else {
+            $decimalPlaces = $digits - floor(log10($number)) - 1;
+        }
+        $answer = ($decimalPlaces > 0) ? number_format($number, $decimalPlaces) : round($number, $decimalPlaces);
+        return (string)$answer;
+    }
+
+    /**
+     * Return the significant digits of given number
+     * Note: input (float)11.0 will return 2 instead of 3, input '11.0' will return 3
+     * Note: illegal input will not throw exception. Example: 1.1.2 will return 4
+     * @param $number
+     * @return int
+     */
+    public static function getSignificantDigits($number, bool $isTailZeroCounted = false): int
+    {
+        $numberStr = ltrim((string)$number, '-');
+        $hasDot = strpos($numberStr, '.') !== false;
+        if ($hasDot) {
+            if ((int)$numberStr) return strlen($numberStr) - 1;
+            else return strlen(ltrim(substr($numberStr, strpos($numberStr, '.') + 1), '0'));
+        } else {
+            return $isTailZeroCounted ? strlen($numberStr) : strlen(rtrim($numberStr, '0'));
+        }
     }
 
     /**

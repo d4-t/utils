@@ -915,4 +915,60 @@ class CmnUtilTest extends AbstractTest
             [['1'], true],
         ];
     }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerFormatSignificantDigits
+     */
+    public function testFormatSignificantDigits($i, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $r = call_user_func_array($fullMethodName, $i);
+        self::assertSame($er, $r);
+    }
+
+    public function providerFormatSignificantDigits()
+    {
+        return [
+            [[123.4567, 4], '123.5'],
+            [[123.4567, 2, true], '120'],
+            [[123.4567, 2], '120'],
+            [[123.4567, 2, false], '123'],
+            [[1, 4], '1.000'],
+            [[0.0123, 4], '0.01230'],
+            [[0.0123, 4, false], '0.0123'],
+            [['0.01230', 4, false], '0.01230'],
+        ];
+    }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerGetSignificantDigits
+     */
+    public function testGetSignificantDigits($i, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $r = call_user_func_array($fullMethodName, $i);
+        self::assertSame($er, $r);
+    }
+
+    public function providerGetSignificantDigits()
+    {
+        return [
+            [[123.4567], 7],
+            [[1], 1],
+            [[120], 2],
+            [[120, true], 3],
+            [[0.0123], 3],
+            [[-0.0123], 3],
+            [[-11], 2],
+            [[-10], 1],
+            [['-10.0'], 3],
+            [['0.012300'], 5],
+            [['1.2.3'], 4], // expected as no error thrown
+        ];
+    }
+
 }
