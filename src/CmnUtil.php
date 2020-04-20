@@ -1870,6 +1870,16 @@ class CmnUtil
 
     }
 
+    /**
+     * Return the location info of given ip address
+     * @param $ip
+     * @return string
+     */
+    public static function getIpInfo($ip)
+    {
+        return IpUtil::getIpInfo($ip);
+    }
+
     protected static function getStrLangArr(string $str): array
     {
         if (0 === mb_strlen($str)) return [self::LANG_UNKNOWN => 1];

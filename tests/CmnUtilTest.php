@@ -5,6 +5,7 @@ namespace Dat\Utils;
 require_once('../src/BashUtil.php');
 require_once('../src/BaseUtil.php');
 require_once('../src/CmnUtil.php');
+require_once('../src/IpUtil.php');
 
 class CmnUtilTest extends AbstractTest
 {
@@ -968,6 +969,25 @@ class CmnUtilTest extends AbstractTest
             [['-10.0'], 3],
             [['0.012300'], 5],
             [['1.2.3'], 4], // expected as no error thrown
+        ];
+    }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerGetIpInfo
+     */
+    public function testGetIpInfo($i, $er)
+    {
+        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
+        $r = call_user_func_array($fullMethodName, $i);
+        self::assertSame($er, $r);
+    }
+
+    public function providerGetIpInfo()
+    {
+        return [
+            [['1.1.1.1'], 'US|California'],
         ];
     }
 
