@@ -778,70 +778,61 @@ class CmnUtilTest extends AbstractTest
 
     /**
      *
-     * @param type $code
+     * @param type $i
      * @param type $er
      * @dataProvider providerGetCountryNameByCode
      */
-    public function testGetCountryNameByCode($code, $er)
+    public function testGetCountryNameByCode($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $testCase = [$code];
-        $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerGetCountryNameByCode()
     {
         return [
-            ['CN', 'China'],
-            ['US', 'United States'],
-            ['ZZ', ''],
+            [['CN'], 'China'],
+            [['US'], 'United States'],
+            [['ZZ'], ''],
         ];
     }
 
     /**
      *
-     * @param type $name
+     * @param type $i
      * @param type $er
      * @dataProvider providerGetCountryCodeByName
      */
-    public function testGetCountryCodeByName($name, $er)
+    public function testGetCountryCodeByName($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $testCase = [$name];
-        $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerGetCountryCodeByName()
     {
         return [
-            ['China', 'CN'],
-            ['United States', 'US'],
-            ['Not a Country', ''],
+            [['China'], 'CN'],
+            [['United States'], 'US'],
+            [['Not a Country'], ''],
         ];
     }
 
     /**
      *
-     * @param type $code
+     * @param type $i
      * @param type $er
      * @dataProvider providerGetAllLocalesFrCountry
      */
-    public function testGetAllLocalesFrCountry($code, $er)
+    public function testGetAllLocalesFrCountry($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $testCase = [$code];
-        $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerGetAllLocalesFrCountry()
     {
         return [
-            ['TH', ['th_TH']],
-            ['CA', ['en_CA', 'fr_CA']],
-            ['CN', ['bo_CN', 'ii_CN', 'ug_CN', 'yue_Hans_CN', 'zh_Hans_CN']],
+            [['TH'], ['th_TH']],
+            [['CA'], ['en_CA', 'fr_CA']],
+            [['CN'], ['bo_CN', 'ii_CN', 'ug_CN', 'yue_Hans_CN', 'zh_Hans_CN']],
         ];
     }
 
@@ -852,21 +843,18 @@ class CmnUtilTest extends AbstractTest
      */
     public function testEncodeUrlParam($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $testCase = [$i];
-        $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertEquals($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerEncodeUrlParam()
     {
         return [
-            [['a' => 'b'], '?a=b'],
-            [['a' => 'b', 'c' => 'd'], '?a=b&c=d'],
-            [['a' => 'b', 'c' => 'd E'], '?a=b&c=d%20E'],
-            [['a' => 'Å'], '?a=%C3%85'],
-            [['a' => 1, 'b' => 2, 'c' => true], "?a=1&b=2&c",],
-            [['a' => 1, 'c' => true], "?a=1&c"],
+            [[['a' => 'b']], '?a=b'],
+            [[['a' => 'b', 'c' => 'd']], '?a=b&c=d'],
+            [[['a' => 'b', 'c' => 'd E']], '?a=b&c=d%20E'],
+            [[['a' => 'Å']], '?a=%C3%85'],
+            [[['a' => 1, 'b' => 2, 'c' => true]], "?a=1&b=2&c",],
+            [[['a' => 1, 'c' => true]], "?a=1&c"],
         ];
     }
 
@@ -877,9 +865,7 @@ class CmnUtilTest extends AbstractTest
      */
     public function testStrPad($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $r = call_user_func_array($fullMethodName, $i);
-        self::assertEquals($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerStrPad()
@@ -899,9 +885,7 @@ class CmnUtilTest extends AbstractTest
      */
     public function testGetBoolFrStr($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $r = call_user_func_array($fullMethodName, $i);
-        self::assertEquals($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerGetBoolFrStr()
@@ -924,9 +908,7 @@ class CmnUtilTest extends AbstractTest
      */
     public function testFormatSignificantDigits($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $r = call_user_func_array($fullMethodName, $i);
-        self::assertSame($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerFormatSignificantDigits()
@@ -950,9 +932,7 @@ class CmnUtilTest extends AbstractTest
      */
     public function testGetSignificantDigits($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $r = call_user_func_array($fullMethodName, $i);
-        self::assertSame($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerGetSignificantDigits()
@@ -979,15 +959,46 @@ class CmnUtilTest extends AbstractTest
      */
     public function testGetIpInfo($i, $er)
     {
-        $fullMethodName = self::TARGET_CLASS . '::' . self::getTargetMethod(__FUNCTION__);
-        $r = call_user_func_array($fullMethodName, $i);
-        self::assertSame($er, $r);
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
     }
 
     public function providerGetIpInfo()
     {
         return [
             [['1.1.1.1'], 'US|California'],
+        ];
+    }
+
+    /**
+     * @param $i
+     * @param $er
+     * @dataProvider providerGetSubstrByIdentifier
+     */
+    public function testGetSubstrByIdentifier($i, $er)
+    {
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
+    }
+
+    public function providerGetSubstrByIdentifier()
+    {
+        return [
+            [['abcdefghijklmnopqrstuvwxyz', 'abc', 'ghi'], 'def'],
+            [['abcdefghijklmnopqrstuvwxyz', 'abc', 'asd'], false],
+            [['abcdefghijklmnopqrstuvwxyz', 'abc'], 'defghijklmnopqrstuvwxyz'],
+            [['abcdefghijklmnopqrstuvwxyz', 'abc', 'ghi', 1, -1], 'e'],
+            [['abcdefghijklmnopqrstuvwxyz', 'abc', 'ghi', 1, 1], 'efg'],
+            [['abcdefghijklmnopqrstuvwxyz', 'def', 'hij'], 'g'],
+            [['abcdefghijklmnopqrstuvwxyz', 'def', 'hij', 1, 0], ''],
+            [['abcdefghijklmnopqrstuvwxyz', 'def', 'hij', 1, -1], false],
+            [['abcdefghijklmnopqrstuvwxyz', 'gdef', 'hij', 1, -1], false],
+            [['abcdefghijklmnopqrstuvwxyz', 'def', 'abc'], false],
+            [['abcdefghijklmnopqrstuvwxyz', 'abc', 'hij', -4], false],
+            [['abcdefghijklmnopqrstuvwxyz', 'abc', 'ghi', 0, -4], false],
+            [['abcdefghijklmnopqrstuvwxyz', '', 'def'], 'abc'],
+            [['abcdefghijklmnopqrstuvwxyz', '', 'def', 1], 'bc'],
+            [['abcdefghijklmnopqrstuvwxyz', '', 'def', 1, -1], 'b'],
+            [['abcdefghijklmnopqrstuvwxyz', '', 'def', 1, -2], ''],
+            [['abcdefghijklmnopqrstuvwxyz', '', 'def', 1, -3], false],
         ];
     }
 

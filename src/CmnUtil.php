@@ -154,6 +154,31 @@ class CmnUtil
         return $result;
     }
 
+    /**
+     * Get substring by identifier and offset
+     * @param string $str
+     * @param string $startStr
+     * @param string $endStr
+     * @param int $startOffset
+     * @param int $endOffset
+     * @return false|string
+     */
+    public static function getSubstrByIdentifier(string $str, string $startStr = '', string $endStr = '', int $startOffset = 0, int $endOffset = 0)
+    {
+        $start = $startStr ? (strpos($str, $startStr) === false ? -1 : strpos($str, $startStr)) : 0;
+        $end = $endStr ? (strpos($str, $endStr, $start) === false ? -1 : strpos($str, $endStr, $start)) : 0;
+        if ($start === -1 || $end === -1) return false;
+        $start += $startOffset + strlen($startStr);
+        if ($start < 0) return false;
+        if ($end === 0) {
+            $len = $endOffset ? $endOffset : null;
+        } else {
+            $end += $endOffset;
+            $len = $end < $start ? false : ($end - $start);
+        }
+        return $len === null ? substr($str, $start) : ($len === false ? false : substr($str, $start, $len));
+    }
+
     protected static function getDateTimeStr(\DateTimeZone $tz = null)
     {
         $datetime = new \DateTime(); // current time = server time
@@ -2167,11 +2192,6 @@ class CmnUtil
         $true = "TRUE";
         $false = "FALSE";
         $null = "NULL";
-//        if ('' === $e) {
-//            CmnUtil::debug($w);
-//            $t = self::strPad($e, $w, " ");
-//            CmnUtil::debug("++$t++", 't');
-//        }
 
         if (is_string($e)) {
             return self::strPad($e, $w, " ");

@@ -14,6 +14,10 @@ class IpUtil
         if (!file_exists($ipCmd)) {
             throw new \Exception("Package ipg does not exist");
         }
-        return trim(shell_exec($ipCmd . " $ip"));
+        $r = trim(shell_exec($ipCmd . " $ip  2>&1"));
+        if (strpos($r, 'ip2location_db5') !== false) {
+            throw new \Exception("Ip Database table does not exist");
+        }
+        return $r;
     }
 }

@@ -4,6 +4,7 @@
 namespace Dat\Utils;
 
 use PHPUnit\Framework\TestCase;
+
 require_once('../src/TestUtil.php');
 
 class AbstractTest extends TestCase
@@ -23,5 +24,27 @@ class AbstractTest extends TestCase
         self::assertEquals(1, 1);
     }
 
+    /**
+     * @param string $class
+     * @param string $function
+     * @param $input
+     * @param $expectedResult
+     */
+    public static function assertSameTest(string $class, string $function, $input, $expectedResult)
+    {
+        $r = call_user_func_array("$class::" . self::getTargetMethod($function), $input);
+        self::assertSame($expectedResult, $r);
+    }
 
+    /**
+     * @param string $class
+     * @param string $function
+     * @param $input
+     * @param $expectedResult
+     */
+    public static function assertEqualsTest(string $class, string $function, $input, $expectedResult)
+    {
+        $r = call_user_func_array("$class::" . self::getTargetMethod($function), $input);
+        self::assertEquals($expectedResult, $r);
+    }
 }
