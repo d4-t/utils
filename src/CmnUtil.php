@@ -579,11 +579,11 @@ class CmnUtil
             $typeStr = 'Error';
             $color = 'light_red';
         } elseif ($type === self::LOGTYPE_WARNING || $type === 'warning') {
-            $typeStr = 'Debug';
-            $color = 'light_cyan';
-        } elseif ($type === self::LOGTYPE_DEBUG || $type === 'debug') {
             $typeStr = 'Warning';
             $color = 'yellow';
+        } elseif ($type === self::LOGTYPE_DEBUG || $type === 'debug') {
+            $typeStr = 'Debug';
+            $color = 'light_cyan';
         } else {
             $typeStr = 'Notice';
             $color = null;
