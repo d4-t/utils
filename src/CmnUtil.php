@@ -1354,11 +1354,10 @@ class CmnUtil
     /**
      * Refresh screen with update of $var
      * @param $var
-     * @param string $name
      * @param float|int $interval
      * @throws \Exception
      */
-    public static function liveDebug($var, $name = "", float $interval = 2)
+    public static function liveDebug($var, float $interval = 2)
     {
         $scColCount = exec('tput cols');
         $scRowCount = exec('tput lines');

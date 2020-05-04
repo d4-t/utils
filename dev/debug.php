@@ -22,5 +22,5 @@ while (true) {
     $tmp['test2'] += 2;
     $tmp["test$i"] = $i++;
     $test [] = $tmp;
-    CmnUtil::liveDebug(CmnUtil::arrayToTable($test, 1), 'testName', 2);
+    CmnUtil::liveDebug(CmnUtil::arrayToTable($test, 1), 2);
 }
