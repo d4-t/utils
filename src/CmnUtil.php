@@ -1351,6 +1351,34 @@ class CmnUtil
         return $r;
     }
 
+    /**
+     * Refresh screen with update of $var
+     * @param $var
+     * @param string $name
+     * @param float|int $interval
+     * @throws \Exception
+     */
+    public static function liveDebug($var, $name = "", float $interval = 2)
+    {
+        $scColCount = exec('tput cols');
+        $scRowCount = exec('tput lines');
+        system('clear');
+        $timeStr = "[" . self::getDateTimeStr() . "]";
+        $r = PHP_EOL . $var;
+        $rows = explode(PHP_EOL, $r);
+        $colCount = 0;
+        foreach ($rows as &$row) {
+            $colCount = max($colCount, mb_strlen($row));
+            $row = mb_substr($row, 0, $scColCount);
+        }
+        $rowCount = count($rows);
+        $rows = array_splice($rows, 0, $scRowCount);
+        $scInfo = " Col: " . ($colCount > $scColCount ? "$scColCount/" . self::getColoredString($colCount, 'red') : $colCount) . " Rows: " . ($rowCount > $scRowCount ? "$scRowCount/" . self::getColoredString($rowCount, 'red') : $rowCount);
+        $r = $timeStr . $scInfo . self::implode(PHP_EOL, $rows);
+        echo $r;
+        usleep($interval * 1000000);
+    }
+
     public static function getCurrentCommit(string $branch = 'master')
     {
         $hash = trim(file_get_contents(__DIR__ . "/../.git/refs/heads/$branch"));
