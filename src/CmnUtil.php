@@ -1282,35 +1282,89 @@ class CmnUtil
 
     /**
      * Create human readable table format of array
-     * @param array $a
-     * @param int $markSet
+     * @param array $a input array
+     * @param int $markSet 0 (+-|), 1 (table symbols), 2 (space)
      * @param int $dimension
+     * @param bool $isTrans transit table
+     * @param bool $rowSeperator seperate the rows by lines
      * @return string
-     * @throws \Exception
      */
-    public static function arrayToTable(array $a, int $markSet = 0, int $dimension = 1): string
+    public static function arrayToTable(array $a, int $markSet = 0, int $dimension = 1, $isTrans = false, $rowSeperator = false): string
     {
+        $d = $dimension >= 0 ? $dimension : 1;
+        $tableArr = self::arrayToTableArray($a, $d);
+        if ($isTrans) $tableArr = self::transTableArray($tableArr);
+        return self::tableArrayToTable($tableArr, $markSet, (bool)$rowSeperator);
+    }
 
-        $r = "";
+    /**
+     * Transform array to a two dimensions array (in order to print to table)
+     * @param array $arr
+     * @param int $d
+     * @return array
+     */
+    public static function arrayToTableArray(array $arr, int $d = 2): array
+    {
+        $r = [];
+        $hasValue = false;
+        foreach ($arr as $k => $v) {
+            $r['key'][] = $k;
+            if (!is_array($v)) {
+                $r['value'][$k] = $v;
+                $hasValue = true;
+            } elseif ($d <= 1) {
+                $r['value'][$k] = json_encode($v);
+                $hasValue = true;
+            } else {
+                self::arrayToTableArray1($v, $d - 1, $r, $k);
+            }
+        }
+        return $r;
+    }
+
+    /**
+     * Transit rows with columns on a table array (refer to arrayToTableArray)
+     * @param array $arr
+     * @return array
+     */
+    public static function transTableArray(array $arr): array
+    {
+        $r = [];
+        foreach ($arr as $k => $v) {
+            if ($k !== 'key') $r['key'][] = $k;
+        }
+        foreach ($arr['key'] as $key) {
+            foreach ($arr as $k => $v) {
+                $r[$key][$k] = array_key_exists($key, $v) ? $v[$key] : ($k === 'key' ? $key : "");
+            }
+        }
+        return $r;
+    }
+
+    /**
+     * Print table from table array (refer to arrayToTableArray)
+     * @param array $arr
+     * @param int $ms
+     * @param bool $rs
+     * @return string
+     */
+    public static function tableArrayToTable(array $arr, int $ms = 0, bool $rs = false): string
+    {
         $set = [
+//          ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 10 , 11 ],
             ["+", "+", "+", "+", "+", "+", "+", "+", "+", "-", "|", " "],
             ["┌", "┐", "└", "┘", "┬", "├", "┤", "┴", "┼", '─', "│", " "],
             [" ", " ", " ", " ", " ", " ", " ", " ", " ", ' ', " ", " "],
         ];
-        $markSet = ($markSet >= 0 && $markSet < count($set)) ? $markSet : 0;
-        $s = $set[$markSet];
-        $d = $dimension > 0 ? $dimension : 2;
-        if (count($a) == 0) return $r;
-        $isAssoc = self::isArrayAssoc($a);
-        $isMulti = self::isArrayMulti($a);
-        $h = self::getTableHeader($a, $isAssoc, $isMulti, $d);
-        $r .= self::createTableHeader($h, $s, $d);
-        foreach ($a as $k => $e) {
-            $r .= PHP_EOL . self::tableLine($h, $isAssoc ? ($isMulti ? ['key' => $k, 'line' => self::convertLine($e, $d)] : [$k, $e]) : $e, $s);
-        }
-        $r .= PHP_EOL . self::createTableFooter($h, $s);
+        $s = in_array($ms, array_keys($set)) ? $set[$ms] : $set[1];
+        $r = "";
+        $h = self::getTbH($arr);
+        $r .= self::genTbH($h, $s);
+        $r .= self::genTbB($arr, $h, $s, $rs);
+        $r .= self::genTbF($h, $s);
         return $r;
     }
+
 
     /**
      * Align tables on the same page
@@ -2006,215 +2060,7 @@ class CmnUtil
         ];
     }
 
-    protected static function convertLine($e, $d, &$r = null, $key = null)
-    {
-        $r = $r ?? [];
-        if ($d == 0 || !is_array($e)) {
-            $key = $key ? $key : 'value';
-            $r[$key] = is_array($e) ? json_encode($e) : $e;
-        } else {
-            $d--;
-            if (!$e && $key) $r[$key] = json_encode($e);
-            foreach ($e as $k => $v) {
-                $newKey = $key ? $key . '.' . $k : $k;
-                self::convertLine($v, $d, $r, $newKey);
-            }
-        }
-        return $r;
-    }
-
-    protected static function getTableWidth($h)
-    {
-        if (is_array($h)) {
-            $r = 0;
-            foreach ($h as $subH) {
-                $r += self::getTableWidth($subH);
-            }
-            return $r;
-        } else {
-            return $h;
-        }
-    }
-
-    protected static function getTableHeader($a, $isAssoc = null, $isMulti = null, $d = 2)
-    {
-        $isMulti = $isMulti ?? self::isArrayMulti($a);
-        $isAssoc = $isAssoc ?? self::isArrayAssoc($a);
-
-        if ($isMulti) {
-            $r = [];
-            $r['key'] = 3;
-            $r['value'] = 5;
-            $hasValue = false;
-            foreach ($a as $k => $v) {
-                $r['key'] = max($r['key'], self::getTableLen($k));
-                if (is_array($v)) {
-                    foreach ($v as $key => $value) {
-                        $r[$key] = isset($r[$key]) ? self::getTableHeader1($value, $d, $r[$key]) : self::getTableHeader1($value, $d);
-                    }
-                } else {
-                    $r['value'] = max($r['value'], self::getTableLen($v));
-                    $hasValue = true;
-                }
-            }
-            if (!$hasValue) unset($r['value']);
-            $r = self::getTableHeader2($r, $d);
-            return $r;
-        } else {
-            $wk = 0;
-            $w = 0;
-            foreach ($a as $k => $e) {
-                $wk = $isAssoc ? max($wk, mb_strlen((string)$k)) : 0;
-                $w = max($w, self::getTableLen($e));
-            }
-            return $isAssoc ? ["key" => $wk, "value" => max(5, $w)] : $w;
-        }
-    }
-
-    protected static function getTableHeader1($a, $d, &$h = null)
-    {
-        $r = $h ? $h : [];
-        if ($d <= 1 || !is_array($a)) {
-            $r = $h ? max($h, self::getTableLen($a)) : self::getTableLen($a);
-        } else {
-            $d--;
-            foreach ($a as $k => $v) {
-                $r[$k] = (is_array($v) && $d >= 1) ? $r[$k] = self::getTableHeader1($v, $d, $subH) : self::getTableLen($v);
-            }
-        }
-        return $r;
-    }
-
-    protected static function getTableHeader2($h, $d, &$r = null, $key = null)
-    {
-        $r = $r ?? [];
-        if ($d == 0 || !is_array($h)) {
-            $r[$key] = max(self::getTableLen($key), $h);
-        } else {
-            if (!$h && $key) {
-                $r[$key] = max(self::getTableLen($key), 2); // 2 is the length of []
-            }
-            $d--;
-            foreach ($h as $k => $v) {
-                $newKey = $key ? $key . '.' . $k : $k;
-                self::getTableHeader2($v, $d, $r, $newKey);
-            }
-        }
-        return $r;
-    }
-
-    protected static function getTableLen($e)
-    {
-        if (is_string($e) || is_numeric($e)) {
-            $w = mb_strlen((string)$e);
-        } elseif (is_bool($e)) {
-            $w = $e ? 4 : 5;
-        } elseif (is_null($e)) {
-            $w = 4;
-        } elseif (is_array($e)) {
-            $w = mb_strlen(json_encode($e));
-        } elseif (is_object($e)) {
-            throw new \Exception("Error: " . self::class . " " . __FUNCTION__ . " Illegal input array");
-        } else {
-            throw new \Exception("Error: " . self::class . " " . __FUNCTION__ . " Unknown");
-        }
-        return $w;
-    }
-
-    protected static function createTableHeader($h, $s, $d)
-    {
-        if (is_array($h)) {
-            $r = $s[0];
-            $i = 0;
-            foreach ($h as $header => $subH) {
-                if ($i++ !== 0) $r .= $s[4];
-                $w = self::getTableWidth($subH);
-                $r .= self::strPad("", $w + 2, $s[9]);
-            }
-            $r .= $s[1]; // First line finish here
-            $depth = min(self::getArrayDepth($h), $d);
-            $r .= self::createTableHeader1($h, $s, $depth);
-        } else {
-            $r = $s[0] . self::strPad("", $h + 2, $s[9]) . $s[1];
-        }
-        return $r;
-    }
-
-    protected static function createTableHeader1($h, $s, $l = 0)
-    {
-        $r = PHP_EOL;
-        foreach ($h as $header => $subH) {
-            $w = self::getTableWidth($subH);
-            $r .= $s[10] . $s[11] . self::strPad($header, $w) . $s[11];
-        }
-        $r .= $s[10] . PHP_EOL . $s[5];
-        $i = 0;
-        foreach ($h as $header => $subH) {
-            if ($i++ !== 0) $r .= $s[8];
-            $w = self::getTableWidth($subH);
-            $r .= self::strPad("", $w + 2, $s[9]);
-        }
-        $r .= $s[6];
-        return $r;
-    }
-
-    protected static function createTableFooter($h, $s)
-    {
-        if (is_array($h)) {
-            $r = $s[2];
-            $i = 0;
-            foreach ($h as $header => $len) {
-                if ($i++ !== 0) $r .= $s[7];
-                $r .= self::strPad("", $len + 2, $s[9]);
-            }
-            $r .= $s[3];
-        } else {
-            $r = $s[2] . self::strPad("", $h + 2, $s[9]) . $s[3];
-        }
-        return $r;
-    }
-
-    protected static function tableLine($w, $e, $s)
-    {
-        $isAssoc = is_array($e) ? self::isArrayAssoc($e) : false;
-        $r = "";
-        if (is_int($w)) {
-            $r = $s[10] . $s[11] . self::tableCell($w, $e) . $s[11];
-        } else if ($isAssoc) {
-            foreach ($w as $k => $wd) {
-                if ($k == 'key') {
-                    $r .= $s[10] . $s[11] . self::tableCell($wd, $e['key']) . $s[11];
-                } else {
-                    $line = $e['line'];
-                    $filled = false;
-                    if (is_array($line)) {
-                        foreach ($line as $key => $v) {
-                            if ($key == $k) {
-                                $r .= $s[10] . $s[11] . self::tableCell($w[$k], $v) . $s[11];
-                                $filled = true;
-                            }
-                        }
-                    } else if ($k == 'value') {
-                        $r .= $s[10] . $s[11] . self::tableCell($w['value'], $line) . $s[11];
-                        $filled = true;
-                    }
-                    if (!$filled) {
-                        $r .= $s[10] . $s[11] . self::tableCell($w[$k], "") . $s[11];
-                    }
-                }
-            }
-        } elseif (count($w) == count($e)) {
-            $i = 0;
-            foreach ($w as $k => $wd) {
-                $r .= $s[10] . $s[11] . self::tableCell($wd, $e[$i++]) . $s[11];
-            }
-        } else {
-            throw new \Exception("Error: " . self::class . " " . __FUNCTION__ . " input error");
-        }
-        return $r . $s[10];
-    }
-
-    protected static function tableCell($w, $e)
+    protected static function getTbC($w, $e)
     {
         $true = "TRUE";
         $false = "FALSE";
@@ -2232,4 +2078,111 @@ class CmnUtil
             return self::strPad(json_encode($e), $w);
         }
     }
+
+    protected static function getPathValue($path, $arr, $i = 0)
+    {
+        if (isset($path[$i]))
+            return self::getPathValue($path, $arr[$path[$i]] ?? "", $i + 1) ?? $arr;
+        else return $arr;
+    }
+
+
+    protected static function arrayToTableArray1(array $arr, int $d, array &$r, string $rKey, string $key = '')
+    {
+        if (count($arr) === 0) $r[$key][$rKey] = [];
+        else $key = $key ? $key . "." : "";
+        foreach ($arr as $k => $v) {
+            if ($d <= 1) {
+                $r[$key . $k][$rKey] = is_array($v) ? json_encode($v) : $v;
+            } else if (!is_array($v)) {
+                $r[$key . $k][$rKey] = $v;
+            } else {
+                self::arrayToTableArray1($v, $d - 1, $r, $rKey, $key . $k);
+            }
+        }
+    }
+
+    protected static function genTbB(array $arr, array $h, array $s, bool $rs): string
+    {
+        $r = PHP_EOL . $s[10];
+        $j = 0;
+        foreach ($arr['key'] as $key) {
+            foreach ($arr as $k => $v) {
+                $tmp = array_key_exists($key, $v) ? $v[$key] : ($k === 'key' ? $key : "");
+                $r .= $s[11] . self::getTbC($h[$k], $tmp) . $s[11] . $s[10];
+            }
+            $r .= PHP_EOL;
+            $i = 0;
+            if (++$j < count($arr['key'])) {
+                if ($rs) {
+                    $r .= $s[5];
+                    foreach ($h as $w) {
+                        $r .= self::strPad("", $w + 2, $s[9]);
+                        if (++$i < count($h)) $r .= $s[8];
+                    };
+                    $r .= $s[6] . PHP_EOL;
+                }
+                $r .= $s[10];
+            }
+
+        }
+        return $r;
+    }
+
+    protected static function genTbH(array $h, array $s): string
+    {
+        $r = $s[0];
+        $i = 0;
+        foreach ($h as $k => $w) {
+            $r .= self::strPad("", $w + 2, $s[9]);
+            if (++$i < count($h)) $r .= $s[4];
+        }
+        $r .= $s[1] . PHP_EOL . $s[10];
+        foreach ($h as $k => $w) {
+            $r .= $s[11] . self::strPad($k, $w, $s[11], STR_PAD_RIGHT) . $s[11] . $s[10];
+        }
+        $i = 0;
+        $r .= PHP_EOL . $s[5];
+        foreach ($h as $k => $w) {
+            $r .= self::strPad("", $w + 2, $s[9]);
+            if (++$i < count($h)) $r .= $s[8];
+        }
+        $r .= $s[6];
+        return $r;
+    }
+
+    protected static function genTbF(array $h, array $s): string
+    {
+        $r = $s[2];
+        $i = 0;
+        foreach ($h as $k => $w) {
+            $r .= self::strPad("", $w + 2, $s[9]);
+            if (++$i < count($h)) $r .= $s[7];
+        }
+        $r .= $s[3];
+        return $r;
+    }
+
+    protected static function getTbH(array $arr): array
+    {
+        $h = [];
+        foreach ($arr as $k => $v) {
+            $h[$k] = mb_strlen($k);
+            foreach ($v as $key => $val) {
+                $h[$k] = max($h[$k], self::getTbCW($val));
+            }
+        }
+        return $h;
+    }
+
+    protected static function getTbCW($v): int
+    {
+        if (is_string($v)) return mb_strlen($v);
+        elseif (is_numeric($v)) return mb_strlen((string)$v);
+        elseif (is_bool($v)) return $v ? 4 : 5;
+        elseif (is_null($v)) return 4;
+        elseif (is_array($v)) return mb_strlen(json_encode($v));
+        else throw new \Exception(__CLASS__ . "::" . __FUNCTION__ . " Error: unknown type of " . gettype($v));
+    }
+
 }

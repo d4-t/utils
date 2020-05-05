@@ -9,8 +9,6 @@ use Dat\Utils\BashUtil;
 use Dat\Utils\CmnUtil;
 
 $test = 'test';
-//CmnUtil::debug($test, 'Test', 1);
-
 $test = [];
 $tmp = [
     "test1" => 0,
@@ -22,5 +20,5 @@ while (true) {
     $tmp['test2'] += 2;
     $tmp["test$i"] = $i++;
     $test [] = $tmp;
-    CmnUtil::liveDebug(CmnUtil::arrayToTable($test, 1), 2);
+    CmnUtil::liveDebug(CmnUtil::arrayToTable($test, 1, 2, 0, 1), 0.5);
 }
