@@ -33,6 +33,7 @@ class BashUtil
         }
         return shell_exec($cmd);
     }
+
     /*
       public static function rm($fileOrDir, $force = false)
       {
@@ -52,7 +53,7 @@ class BashUtil
 
     public static function p7z()
     {
-        
+
     }
 
     /**
@@ -249,5 +250,84 @@ class BashUtil
     {
         $cpuArr = self::getCpuUsageArray();
         return isset($cpuArr['idle']) ? (1 - $cpuArr['idle']) : null;
+    }
+
+    /**
+     * Get df info as table
+     * @param bool $isHumanReadable
+     * @param bool $isFull
+     * @param bool $isColor
+     * @return string
+     * @throws \Exception
+     */
+    public static function getDfTable(bool $isHumanReadable = true, bool $isFull = false, bool $isColor = true): string
+    {
+        $o = $isHumanReadable ? "-h" : "";
+        $o .= $isFull ? "" : "| grep -v loop | grep -v tmpfs";
+        $r = self::getDf($o);
+        if ($isColor) {
+            foreach ($r ?? [] as $k => $line) {
+                $per = ($line['Use%'] ?? 0) * 100;
+                if ($per > 90) $r[$k]['Use%'] = CmnUtil::getColoredString("$per%", 'white', 'red');
+                elseif ($per > 80) $r[$k]['Use%'] = CmnUtil::getColoredString("$per%", 'red');
+                elseif ($per > 50) $r[$k]['Use%'] = CmnUtil::getColoredString("$per%", 'yellow');
+                else $r[$k]['Use%'] = "$per%";
+            }
+        }
+        return CmnUtil::arrayToTable($r, 3, 2);
+    }
+
+    /**
+     * Get df as array
+     * @param string $o
+     * @return array
+     * @throws \Exception
+     */
+    public static function getDf(string $o = ''): array
+    {
+        $r = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $tmp = explode(PHP_EOL, trim(shell_exec("df $o| awk '{print $$i}'")));
+            $key = array_shift($tmp);
+            $t[$key] = $tmp;
+        }
+        foreach ($t['Use%'] ?? [] as $k => $use) {
+            $per = (float)rtrim($use, "%");
+            $t['Use%'][$k] = $per / 100;
+        }
+        $count = 0;
+        foreach ($t as $key => $arr) {
+            if ($count && $count !== count($arr)) throw new \Exception(__CLASS__ . "::" . __FUNCTION__ . " df error");
+            $count = count($arr);
+            foreach ($arr as $k => $v) {
+                if (in_array($key, ["Available", "Used", "1K-blocks"]))
+                    $r[$k][$key] = (int)$v;
+                else$r[$k][$key] = $v;
+            }
+        }
+        return $r;
+    }
+
+    public static function getMemoryAvail(bool $isPercentage = false): ?float
+    {
+        $u = self::getMemoryUsageArray();
+        if ($isPercentage) {
+            return ($u["MemAvailable"] ?? 0) / ($u["MemTotal"] ?? PHP_INT_MAX) * 100;
+        } else {
+            return $u["MemAvailable"] ?? null;
+        }
+    }
+
+    public static function getMemoryUsageArray()
+    {
+        $fh = fopen('/proc/meminfo', 'r');
+        $r = [];
+        while ($line = fgets($fh)) {
+            $tmp = explode(":", $line);
+            if (isset($tmp[0]) && isset($tmp[1]))
+                $r[trim($tmp[0])] = (int)trim($tmp[1]) * 1024;
+        }
+        fclose($fh);
+        return $r;
     }
 }

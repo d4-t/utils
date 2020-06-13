@@ -11,6 +11,8 @@
 
 namespace Dat\Utils;
 
+use BaconQrCode\Renderer\Color\Cmyk;
+
 class CmnUtil
 {
     const LOGTYPE_NOTICE = 0;
@@ -203,7 +205,9 @@ class CmnUtil
             $r .= "[$typeStr] $dateStr $name : ";
         }
         if ($hasVar) {
-            $r .= self::dumpVar($var, ($api === 'cli'), $verbose);
+            $c = self::dumpVar($var, ($api === 'cli'), $verbose);
+            if (strpos(trim($c), PHP_EOL) !== false) $c = PHP_EOL . $c;
+            $r .= $c;
         }
         return $r;
     }
@@ -348,6 +352,28 @@ class CmnUtil
             $cString .= "\033[" . $bgColors[$bgColor] . "m";
         $cString .= $string . "\033[0m";
         return $cString;
+    }
+
+    /**
+     * Get mb string len of string, color string color code is ignored
+     * @param string $str
+     * @return int
+     */
+    public static function getStrLen(string $str): int
+    {
+        $str = self::removeStrColor($str);
+        return mb_strlen($str);
+    }
+
+    /**
+     * Remove color code for command line color text
+     * @param string $str
+     * @return string
+     */
+    public static function removeStrColor(string $str): string
+    {
+        $str = preg_replace('/\033\[\d;3\dm(.*?)\\033\[0m/', '$1', $str);  // fgcolor
+        return preg_replace('/\033\[4\dm(.*?)/', '$1', $str);  // bgcolor
     }
 
     /**
@@ -1306,15 +1332,12 @@ class CmnUtil
     public static function arrayToTableArray(array $arr, int $d = 2): array
     {
         $r = [];
-        $hasValue = false;
         foreach ($arr as $k => $v) {
             $r['key'][] = $k;
             if (!is_array($v)) {
                 $r['value'][$k] = $v;
-                $hasValue = true;
             } elseif ($d <= 1) {
                 $r['value'][$k] = json_encode($v);
-                $hasValue = true;
             } else {
                 self::arrayToTableArray1($v, $d - 1, $r, $k);
             }
@@ -1357,6 +1380,7 @@ class CmnUtil
             [" ", " ", " ", " ", " ", " ", " ", " ", " ", ' ', " ", " "],
         ];
         $s = in_array($ms, array_keys($set)) ? $set[$ms] : $set[1];
+        if ($arr === []) return $s[0] . $s[9] . $s[1] . PHP_EOL . $s[2] . $s[9] . $s[3]; // empty array
         $r = "";
         $h = self::getTbH($arr);
         $r .= self::genTbH($h, $s);
@@ -1364,7 +1388,6 @@ class CmnUtil
         $r .= self::genTbF($h, $s);
         return $r;
     }
-
 
     /**
      * Align tables on the same page
@@ -1386,7 +1409,7 @@ class CmnUtil
         if ($headers) {
             foreach ($headers as $key => $header) {
                 if ($key < count($tArrs)) {
-                    $r .= self::strPad($header, mb_strlen($tArrs[$key][0]) + $dist, " ");
+                    $r .= self::strPad($header, self::getStrLen($tArrs[$key][0]) + $dist, " ");
                 }
             }
             $r .= PHP_EOL;
@@ -1396,7 +1419,7 @@ class CmnUtil
                 if ($i < count($tArr)) {
                     $r .= $tArr[$i];
                 } else {
-                    $r .= self::strPad("", mb_strlen(end($tArr)));
+                    $r .= self::strPad("", self::getStrLen(end($tArr)));
                 }
                 $r .= self::strPad("", $dist, $separator);
             }
@@ -1421,7 +1444,7 @@ class CmnUtil
         $rows = explode(PHP_EOL, $r);
         $colCount = 0;
         foreach ($rows as &$row) {
-            $colCount = max($colCount, mb_strlen($row));
+            $colCount = max($colCount, self::getStrLen($row));
             $row = mb_substr($row, 0, $scColCount);
         }
         $rowCount = count($rows);
@@ -1460,8 +1483,8 @@ class CmnUtil
 
     public static function strPad($str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT)
     {
-        $str_len = mb_strlen($str);
-        $pad_str_len = mb_strlen($pad_str);
+        $str_len = self::getStrLen($str);
+        $pad_str_len = self::getStrLen($pad_str);
         if (0 !== $str_len && !$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
             $str_len = 1; // @debug
         }
@@ -1476,7 +1499,8 @@ class CmnUtil
         } else {
             if ($dir == STR_PAD_RIGHT) {
                 $result = $str . str_repeat($pad_str, $pad_len);
-                $result = mb_substr($result, 0, $pad_len);
+                $cutLen = mb_strlen($str) <= $pad_len ? $pad_len : $pad_len - self::getStrLen($str) + mb_strlen($str);
+                $result = mb_substr($result, 0, $cutLen);
             } else if ($dir == STR_PAD_LEFT) {
                 $result = str_repeat($pad_str, $pad_len);
                 $result = mb_substr($result, 0, $pad_len - (($str_len - $pad_str_len) + $pad_str_len)) . $str;
@@ -1870,11 +1894,11 @@ class CmnUtil
 
     /**
      * mb safe (utf-8) str_split
-     * @param type $str
-     * @param type $len
-     * @return type
+     * @param string $str
+     * @param int $len
+     * @return array
      */
-    public static function strSplitUnicode($str, $len = 1)
+    public static function strSplitUnicode(string $str, $len = 1): array
     {
         $arr = [];
         $length = mb_strlen($str, 'UTF-8');
@@ -2119,12 +2143,11 @@ class CmnUtil
                     foreach ($h as $w) {
                         $r .= self::strPad("", $w + 2, $s[9]);
                         if (++$i < count($h)) $r .= $s[8];
-                    };
+                    }
                     $r .= $s[6] . PHP_EOL;
                 }
                 $r .= $s[10];
             }
-
         }
         return $r;
     }
@@ -2167,7 +2190,7 @@ class CmnUtil
     {
         $h = [];
         foreach ($arr as $k => $v) {
-            $h[$k] = mb_strlen($k);
+            $h[$k] = self::getStrLen($k);
             foreach ($v as $key => $val) {
                 $h[$k] = max($h[$k], self::getTbCW($val));
             }
@@ -2177,12 +2200,11 @@ class CmnUtil
 
     protected static function getTbCW($v): int
     {
-        if (is_string($v)) return mb_strlen($v);
-        elseif (is_numeric($v)) return mb_strlen((string)$v);
+        if (is_string($v)) return self::getStrLen($v);
+        elseif (is_numeric($v)) return self::getStrLen((string)$v);
         elseif (is_bool($v)) return $v ? 4 : 5;
         elseif (is_null($v)) return 4;
-        elseif (is_array($v)) return mb_strlen(json_encode($v));
+        elseif (is_array($v)) return self::getStrLen(json_encode($v));
         else throw new \Exception(__CLASS__ . "::" . __FUNCTION__ . " Error: unknown type of " . gettype($v));
     }
-
 }

@@ -140,19 +140,19 @@ class CmnUtilTest extends AbstractTest
         $var = new \DateTime();
         $testCase = [$var, true, false];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertContains("DateTime", $r);
+        self::assertStringContainsString("DateTime", $r);
 
         $testCase = [$var, true, 0];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertContains("DateTime", $r);
+        self::assertStringContainsString("DateTime", $r);
 
         $testCase = [$var, true, true];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertContains("object(DateTime)", $r);
+        self::assertStringContainsString("object(DateTime)", $r);
 
         $testCase = [$var, true, 2];
         $r = call_user_func_array($fullMethodName, $testCase);
-        self::assertContains("createFromFormat", $r);
+        self::assertStringContainsString("createFromFormat", $r);
 
         $testCase = [true, true, 2];
         $r = call_user_func_array($fullMethodName, $testCase);
@@ -191,7 +191,7 @@ class CmnUtilTest extends AbstractTest
                 "b" => ["b" => ["c" => ["d" => "asdf", "h" => "i"], "j" => 'k']]
             ],
             json_decode('{"Test":{"a":{"b":1565181040,"c":0,"d":"2019-08-07 12:30:40"},"e":[]}}', true),
-
+            ['a', CmnUtil::getColoredString('b', 'red'), CmnUtil::getColoredString(123456, 'green', 'yellow')],
         ];
         return [
             // Simple array
@@ -284,8 +284,16 @@ class CmnUtilTest extends AbstractTest
 │ lang │ en │ th │
 │ a    │  1 │    │
 └──────┴────┴────┘"],
+            [[[], 1], "┌─┐
+└─┘"],
+            [[$arr[4], 1], "┌─────┬────────┐
+│ key │ value  │
+├─────┼────────┤
+│   0 │ a      │
+│   1 │ \033[0;31mb\033[0m      │
+│   2 │ \033[0;32m\033[43m123456\033[0m │
+└─────┴────────┘"],
         ];
-
     }
 
     public function testIsArrayAssoc()
@@ -347,9 +355,7 @@ class CmnUtilTest extends AbstractTest
 
     public function testSetParam()
     {
-
         $arr = ["a" => true, "b" => ["c" => "d"], "e" => "true", "f" => null];
-
         CmnUtil::setParam($arr, 'a', false);
         $r = CmnUtil::getParam('a', $arr);
         self::assertFalse($r);
@@ -360,9 +366,7 @@ class CmnUtilTest extends AbstractTest
 
     public function testIncrementParam()
     {
-
         $arr = ["a" => 2, "b" => ["c" => "d"], "e" => "4", "f" => null];
-
         CmnUtil::incrementParam($arr, 'f');
         $r = CmnUtil::getParam('f', $arr);
         self::assertEquals(1, $r);

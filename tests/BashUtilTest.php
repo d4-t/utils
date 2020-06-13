@@ -138,4 +138,18 @@ class BashUtilTest extends AbstractTest
         self::assertEquals(1, $r['user'] + $r['sys'] + $r['idle']);
     }
 
+    public function testGetDfTable()
+    {
+        $r = call_user_func_array(self::TARGET_CLASS . "::" . self::getTargetMethod(__FUNCTION__), []);
+        self::assertStringContainsString("Use", $r);
+        self::assertStringContainsString("Mounted", $r);
+        self::assertStringContainsString("/dev", $r);
+    }
+
+    public function testGetMemoryUsageArray()
+    {
+        $r = json_encode(call_user_func_array(self::TARGET_CLASS . "::" . self::getTargetMethod(__FUNCTION__), []));
+        self::assertStringContainsString("MemTotal", $r);
+        self::assertStringContainsString("MemFree", $r);
+    }
 }
