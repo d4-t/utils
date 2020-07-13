@@ -11,6 +11,8 @@
 
 namespace Dat\Utils;
 
+use Amazon\Core\Block\Adminhtml\Form\Field\CategoryMultiselect;
+
 class BashUtil
 {
 
@@ -308,6 +310,10 @@ class BashUtil
         return $r;
     }
 
+    /**
+     * @param bool $isPercentage
+     * @return float|null
+     */
     public static function getMemoryAvail(bool $isPercentage = false): ?float
     {
         $u = self::getMemoryUsageArray();
@@ -318,6 +324,9 @@ class BashUtil
         }
     }
 
+    /**
+     * @return array
+     */
     public static function getMemoryUsageArray()
     {
         $fh = fopen('/proc/meminfo', 'r');
@@ -329,5 +338,69 @@ class BashUtil
         }
         fclose($fh);
         return $r;
+    }
+
+    /**
+     * @param string $file
+     * @return array
+     * @throws \Exception
+     */
+    public static function parseApacheAccessLog(string $file = "/var/log/apache2/access.log"): array
+    {
+        $fh = fopen($file, 'r');
+        $r = [];
+        $errCount = 0;
+        while ($line = fgets($fh)) {
+            preg_match('/\[.*?\]/', $line, $time);
+            if (count($time) !== 1 && ++$errCount) continue;
+            $arr = explode($time[0], $line);
+            if (count($arr) !== 2 && ++$errCount) continue;
+            $time = new \DateTime(trim(trim($time[0], '['), ']'));
+            $arr0 = explode(' ', trim($arr[0]));
+            if (count($arr0) !== 3 && ++$errCount) continue;
+            $ip = $arr0[0];
+            preg_match_all('/\".*?\"/', $arr[1], $arr1);
+            if (count($arr1[0]) !== 3 && ++$errCount) continue;
+            $tmp = $arr[1];
+            foreach ($arr1 as $p) {
+                $tmp = trim(str_replace($p, '', $tmp));
+            }
+            $arr2 = explode(' ', $tmp);
+            if (count($arr2) !== 2 && ++$errCount) continue;
+            $httpCode = $arr2[0];
+            $size = $arr2[1];
+            $req = trim($arr1[0][0], '"');
+            $referer = trim($arr1[0][1], '"');
+            $userAgent = trim($arr1[0][2], '"');
+            $r[] = ['ip' => $ip, 'time' => $time, 'req' => $req, 'httpCode' => $httpCode, 'size' => $size, 'referer' => $referer, 'userAgent' => $userAgent];
+        }
+        return $r;
+    }
+
+    public static function analyseApacheAccessLog(string $file = "/var/log/apache2/access.log"): array
+    {
+        $log = BashUtil::parseApacheAccessLog();
+        $last10Min = $lastHr = $lastDay = $err = [];
+        foreach ($log as $record) {
+            if (self::isRecordBot($record)) continue;
+            $code = $record['httpCode'];
+            $err["http$code"] = ($err["http$code"] ?? 0) + 1;
+            if ($record['httpCode'] != "200") continue;
+            if ((microtime(true) - (int)$record['time']->format('U')) < 600) $last10Min[$record['ip']] = "";
+            if ((microtime(true) - (int)$record['time']->format('U')) < 3600) $lastHr[$record['ip']] = "";
+            if ((microtime(true) - (int)$record['time']->format('U')) < 24 * 3600) $lastDay[$record['ip']] = "";
+        }
+        return array_merge(['last10Min' => count($last10Min), 'lastHour' => count($lastHr), 'last24Hr' => count($lastDay)], $err);
+    }
+
+    private static function isRecordBot(array $record): bool
+    {
+        $req = "robots.txt";
+        $botAgents = ['/bot.html', '/robot.html', '/robot/', 'Googlebot', 'bingbot', 'SemrushBot', 'SEOkicks', 'MJ12bot', 'applebot', 'DotBot', 'YandexBot', 'yandex.com/bots', 'AhrefsBot', 'ZoominfoBot', 'PetalBot', 'SeznamBot'];
+        if (strpos($record['req'] ?? "", $req) !== false) return true;
+        foreach ($botAgents as $botAgent) {
+            if (strpos($record['userAgent'] ?? "", $botAgent) !== false) return true;
+        }
+        return false;
     }
 }

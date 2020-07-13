@@ -1543,6 +1543,16 @@ class CmnUtil
 
     public static function getConstantValues(string $class, string $prefix = "", $isLog = true)
     {
+        $arr = self::getConstantsAsArray($class, $prefix, $isLog);
+        $r = [];
+        foreach ($arr as $v) {
+            $r[] = $v;
+        }
+        return $r;
+    }
+
+    public static function getConstantsAsArray(string $class, string $prefix = "", $isLog = true): array
+    {
         $r = [];
         try {
             $rClass = new \ReflectionClass($class);
@@ -1551,7 +1561,8 @@ class CmnUtil
                 if (substr($name, 0, strlen($prefix)) !== $prefix) {
                     unset($constants[$name]);
                 } else {
-                    array_push($r, $val);
+                    $constName = trim(substr($name, strlen($prefix)), '_');
+                    $r[$constName] = $val;
                 }
             }
         } catch (\ReflectionException $e) {

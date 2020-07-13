@@ -4,3 +4,4 @@ vendor
 vendor/*
 /nbproject/
 /nbproject/*
+/tests/.phpunit.result.cache

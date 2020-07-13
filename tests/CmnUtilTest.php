@@ -535,6 +535,29 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
+     * @param $class
+     * @param $prefix
+     * @param $er
+     * @dataProvider providerGetConstantsAsArray
+     */
+    public function testGetConstantsAsArray($class, $prefix, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $testCase = [$class, $prefix, false];
+        $r = call_user_func_array($fullMethodName, $testCase);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerGetConstantsAsArray()
+    {
+        return [
+            ['\Dat\Utils\CmnUtil', 'LOGTYPE', ['NOTICE' => CmnUtil::LOGTYPE_NOTICE, 'WARNING' => CmnUtil::LOGTYPE_WARNING, 'DEBUG' => CmnUtil::LOGTYPE_DEBUG, 'ERROR' => CmnUtil::LOGTYPE_ERROR]],
+            ['\Dat\Utils\CmnUtil', '', ['LOGTYPE_NOTICE' => CmnUtil::LOGTYPE_NOTICE, 'LOGTYPE_WARNING' => CmnUtil::LOGTYPE_WARNING, 'LOGTYPE_DEBUG' => CmnUtil::LOGTYPE_DEBUG, 'LOGTYPE_ERROR' => CmnUtil::LOGTYPE_ERROR, 'TEST' => CmnUtil::TEST, 'LANG_UNKNOWN' => CmnUtil::LANG_UNKNOWN]],
+        ];
+    }
+
+    /**
      * @param $str
      * @param $er
      * @dataProvider providerGetFloatFrStr
@@ -854,7 +877,7 @@ class CmnUtilTest extends AbstractTest
             [[['a' => 'b', 'c' => 'd']], '?a=b&c=d'],
             [[['a' => 'b', 'c' => 'd E']], '?a=b&c=d%20E'],
             [[['a' => 'Å']], '?a=%C3%85'],
-            [[['a' => 1, 'b' => 2, 'c' => true]], "?a=1&b=2&c",],
+            [[['a' => 1, 'b' => 2, 'c' => true]], "?a=1&b=2&c"],
             [[['a' => 1, 'c' => true]], "?a=1&c"],
         ];
     }
