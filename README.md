@@ -3,4 +3,4 @@ PHP utils
 
 Required packages:
 
-p7zip-full cpulimit
+p7zip-full cpulimit php-intl

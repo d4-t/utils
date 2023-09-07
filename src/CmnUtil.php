@@ -6,7 +6,7 @@
  *  **  \ \ \_\ \ || |_\ \ \/_/\ \_/   *
  *   **  \ \____| ||_|\ \_\   \ \ \     *
  *    **  \/___/  /_/  \/_/    \/_/      *
- *     **       Copyright 2014-2020 Dat   *
+ *     **       Copyright 2014-2023 Dat   *
  *      *********************************** */
 
 namespace Dat\Utils;
@@ -2020,21 +2020,21 @@ class CmnUtil
     {
         return IpUtil::getIpInfo($ip);
     }
-
+    
     protected static function getStrLangArr(string $str): array
     {
         if (0 === mb_strlen($str)) return [self::LANG_UNKNOWN => 1];
         $r = [];
         $langData = [
-            'sym' => '/[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/#@\s\t\n\r\\\]/',
+            'sym' => '/[-!$%^&*()_+|~=`{}\[\]:";\'<>?,。.\/#@\s\t\n\r\\\]/',
             'en' => '/[a-zA-Z]/u',
             'th' => '/\p{Thai}/u',
             'zh' => '/\p{Han}/u',
             'my' => '/\p{Myanmar}/u',
             'lo' => '/\p{Lao}/u',
             'km' => '/\p{Khmer}/u',
-            'jp' => '/[\p{Hiragana}\p{Katakana}]/u',
-            'kr' => '/\p{Hangul}/u',
+            'jp' => '/[\x{30A0}-\x{30FF}\x{3040}-\x{309F}]/u',
+            'kr' => '/[\x{3130}-\x{318F}\x{AC00}-\x{D7AF}\x{A960}-\x{A97F}\x{D7B0}-\x{D7FF}\x{1100}-\x{11FF}]/u',
             'vn' => '/[àáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ]/u',
         ];
 
