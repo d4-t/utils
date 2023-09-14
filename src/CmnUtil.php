@@ -347,9 +347,9 @@ class CmnUtil
         $bgColors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47',);
         $cString = "";
         if (isset($fgColors[$fgColor]))
-            $cString .= "\033[" . $fgColors[$fgColor] . "m";
+                $cString .= "\033[" . $fgColors[$fgColor] . "m";
         if (isset($bgColors[$bgColor]))
-            $cString .= "\033[" . $bgColors[$bgColor] . "m";
+                $cString .= "\033[" . $bgColors[$bgColor] . "m";
         $cString .= $string . "\033[0m";
         return $cString;
     }
@@ -407,7 +407,8 @@ class CmnUtil
      */
     public static function formatSignificantDigits($number, int $digits = 2, bool $isStrict = true)
     {
-        if (!$isStrict) $digits = (int)$number ? strlen((string)(int)$number) : self::getSignificantDigits($number);
+        if (!$isStrict)
+                $digits = (int)$number ? strlen((string)(int)$number) : self::getSignificantDigits($number);
         if ($number == 0) {
             $decimalPlaces = $digits - 1;
         } elseif ($number < 0) {
@@ -432,7 +433,8 @@ class CmnUtil
         $hasDot = strpos($numberStr, '.') !== false;
         if ($hasDot) {
             if ((int)$numberStr) return strlen($numberStr) - 1;
-            else return strlen(ltrim(substr($numberStr, strpos($numberStr, '.') + 1), '0'));
+            else
+                    return strlen(ltrim(substr($numberStr, strpos($numberStr, '.') + 1), '0'));
         } else {
             return $isTailZeroCounted ? strlen($numberStr) : strlen(rtrim($numberStr, '0'));
         }
@@ -449,7 +451,7 @@ class CmnUtil
     public static function findMissingInGroupArray($groupArr)
     {
         if (!is_array($groupArr))
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
         $all = array();
         foreach ($groupArr as $arr) {
             $tmp = range($arr['head'], $arr['tail']);
@@ -471,7 +473,7 @@ class CmnUtil
     public static function maxInGroupArray($groupArr)
     {
         if (!is_array($groupArr))
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() input must be array");
         $all = array();
         foreach ($groupArr as $arr) {
             $tmp = range($arr['head'], $arr['tail']);
@@ -491,15 +493,15 @@ class CmnUtil
     public static function decodeIo($io)
     {
         if (!is_string($io))
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
         if (strlen($io) > 2 || strlen($io) == 0)
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input. io: $io");
         $io = strtolower($io);
         $input = substr($io, 0, 1);
         $output = substr($io, -1);
         $ioList = array('h', 'd', 'b', 'i', 'f', 's', 'n');
         if (!in_array($input, $ioList) || !in_array($output, $ioList))
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() meet invalid input. Input: $input, Output: $output");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . "() meet invalid input. Input: $input, Output: $output");
         $r['input'] = $input;
         $r['output'] = $output;
         return $r;
@@ -515,9 +517,9 @@ class CmnUtil
     public static function encodeIo($ioArr)
     {
         if (!isset($ioArr['input']) || !isset($ioArr['output']))
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
         if (strlen($ioArr['input']) !== 1 || strlen($ioArr['output']) !== 1)
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " meet invalid input.");
         return $ioArr['input'] . $ioArr['output'];
     }
 
@@ -531,7 +533,7 @@ class CmnUtil
     {
         if (is_array($pieces)) return implode($glue, $pieces);
         elseif (is_object($pieces))
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " invalid arguemnt");
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . " invalid arguemnt");
         else return $pieces;
     }
 
@@ -650,13 +652,13 @@ class CmnUtil
                 $r = (string)(int)$line === $line;
                 if ($r) return (int)$line;
                 else
-                    return self::getInput("An integer is required, please try again:", $dataType, $default);
+                        return self::getInput("An integer is required, please try again:", $dataType, $default);
             case "multi_int":
             case "multiInt":
                 $arr = array_map('trim', explode(',', $line));
                 foreach ($arr as $num) {
                     if ((string)(int)$num !== $num)
-                        return self::getInput("Integers are required, please try again:", $dataType, $default);
+                            return self::getInput("Integers are required, please try again:", $dataType, $default);
                 }
                 return $arr;
             case "multi_str":
@@ -672,7 +674,7 @@ class CmnUtil
                 $r = floatval($line);
                 if ($r) return (double)$line;
                 else
-                    return self::getInput("An real number is required, please try again:", $dataType, $default);
+                        return self::getInput("An real number is required, please try again:", $dataType, $default);
             case "str":
             case "string":
             default:
@@ -686,9 +688,9 @@ class CmnUtil
         if (preg_match('/^win/i', PHP_OS)) {
             $vbscript = sys_get_temp_dir() . 'prompt_password.vbs';
             file_put_contents(
-                $vbscript, 'wscript.echo(InputBox("'
-                . addslashes($prompt)
-                . '", "", "password here"))');
+                    $vbscript, 'wscript.echo(InputBox("'
+                    . addslashes($prompt)
+                    . '", "", "password here"))');
             $command = "cscript //nologo " . escapeshellarg($vbscript);
             $password = rtrim(shell_exec($command));
             unlink($vbscript);
@@ -700,8 +702,8 @@ class CmnUtil
                 return;
             }
             $command = "/usr/bin/env bash -c 'read -s -p \""
-                . addslashes($prompt)
-                . "\" mypassword && echo \$mypassword'";
+                    . addslashes($prompt)
+                    . "\" mypassword && echo \$mypassword'";
             $password = rtrim(shell_exec($command));
             echo "\n";
             return $password;
@@ -728,7 +730,7 @@ class CmnUtil
         if (in_array($test, $trueArray)) return true;
         elseif (in_array($test, $falseArray)) return false;
         else
-            throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . '() invalid input boolean string');
+                throw new \Exception(__CLASS__ . '::' . __FUNCTION__ . '() invalid input boolean string');
     }
 
     /**
@@ -889,7 +891,6 @@ class CmnUtil
         ob_flush();
         flush();
 
-
         if ($timeout < 0) $timeout = ini_get('default_socket_timeout');
 
         set_time_limit(0);
@@ -913,12 +914,11 @@ class CmnUtil
         curl_close($ch);
         fclose($fp);
 
-
         ob_flush();
         flush();
         ob_end_clean();
         if ($fReturnStatus)
-            return $fs == filesize($localfile) || $fs == "unknown";
+                return $fs == filesize($localfile) || $fs == "unknown";
     }
 
     /**
@@ -967,11 +967,11 @@ class CmnUtil
     public static function humanFileSize($size, $unit = "")
     {
         if ((!$unit && $size >= 1 << 30) || $unit == "GB")
-            return number_format($size / (1 << 30), 2) . "GB";
+                return number_format($size / (1 << 30), 2) . "GB";
         if ((!$unit && $size >= 1 << 20) || $unit == "MB")
-            return number_format($size / (1 << 20), 2) . "MB";
+                return number_format($size / (1 << 20), 2) . "MB";
         if ((!$unit && $size >= 1 << 10) || $unit == "KB")
-            return number_format($size / (1 << 10), 2) . "KB";
+                return number_format($size / (1 << 10), 2) . "KB";
         return number_format($size) . " bytes";
     }
 
@@ -1182,12 +1182,12 @@ class CmnUtil
     {
         if (is_string($input)) return $input;
         if (!is_array($input))
-            self::error("Help text must be string or array!", '', 1);
+                self::error("Help text must be string or array!", '', 1);
         $r = '';
         foreach ($input as $k => $v) {
             if ($k === 0) $r .= $v;
             elseif (is_numeric($k))
-                $r .= PHP_EOL . "    -param " . ($k - 1) . " : " . $v;
+                    $r .= PHP_EOL . "    -param " . ($k - 1) . " : " . $v;
             else $r .= PHP_EOL . "    -$k : " . $v;
         }
         return $r;
@@ -1380,7 +1380,8 @@ class CmnUtil
             [" ", " ", " ", " ", " ", " ", " ", " ", " ", ' ', " ", " "],
         ];
         $s = in_array($ms, array_keys($set)) ? $set[$ms] : $set[1];
-        if ($arr === []) return $s[0] . $s[9] . $s[1] . PHP_EOL . $s[2] . $s[9] . $s[3]; // empty array
+        if ($arr === [])
+                return $s[0] . $s[9] . $s[1] . PHP_EOL . $s[2] . $s[9] . $s[3]; // empty array
         $r = "";
         $h = self::getTbH($arr);
         $r .= self::genTbH($h, $s);
@@ -1819,7 +1820,7 @@ class CmnUtil
     {
         $last = ($precision == 'm' ? 'i' : strtolower($precision));
         if (!in_array($last, ['y', 'm', 'd', 'h', 'i', 's', 'f', 'z']))
-            return '';
+                return '';
         $dateDiffArr = self::dateIntervalToArray($dateDiff);
         if ('z' == $last) {
             $rDateDiffArr = array_reverse($dateDiffArr);
@@ -1851,7 +1852,7 @@ class CmnUtil
             if ($k == strtolower($last)) break;
         }
         if ('f' === strtolower($precision) && 'f' === $last && 'f' === $startFr)
-            return $dateDiff->format("%fmicroseconds");
+                return $dateDiff->format("%fmicroseconds");
         $sStr = ('f' === $last && 'z' !== $precision) ? number_format($s, 6) : rtrim(rtrim(number_format($s, 6), '0'), '.') . 's';
 
         if ('s' == $last || 'f' == $last) $r .= $sStr;
@@ -1881,7 +1882,7 @@ class CmnUtil
             $t2 = array_keys($arrN, max($arrN));
             $secondMaxKey = array_shift($t2);
             if ($arr[$maxKey] - $arr[$secondMaxKey] < $sd)
-                return self::LANG_UNKNOWN;
+                    return self::LANG_UNKNOWN;
             return $maxKey;
         }
     }
@@ -2008,7 +2009,6 @@ class CmnUtil
             $r .= true === $v ? '' : ('=' . self::encodeUrlOnlySpecial($v));
         }
         return $r;
-
     }
 
     /**
@@ -2020,7 +2020,17 @@ class CmnUtil
     {
         return IpUtil::getIpInfo($ip);
     }
-    
+
+    /**
+     * Remove the null byte(\0) from string
+     * @param string $str
+     * @return type
+     */
+    public static function removeNullFrStr(string $str)
+    {
+        return str_replace("\0", "", $str);
+    }
+
     protected static function getStrLangArr(string $str): array
     {
         if (0 === mb_strlen($str)) return [self::LANG_UNKNOWN => 1];
@@ -2064,13 +2074,13 @@ class CmnUtil
         if (isset($lm['jp']) && isset($lm['zh']) && $lm['zh'] > 0) {
             $r['jp'] = min($lm['jp'] * 20 / $cc, 1);
             if ($lm['zh'] / $cc > $r['jp'])
-                $r['zh'] = min($lm['zh'] / $cc - $r['jp'], 1);
+                    $r['zh'] = min($lm['zh'] / $cc - $r['jp'], 1);
             else unset($r['zh']);
         }
         if (isset($lm['vn']) && isset($lm['en']) && $lm['en'] > 0) {
             $r['vn'] = min($lm['vn'] * 10 / $cc, 1);
             if ($lm['en'] / $cc > $r['vn'])
-                $r['en'] = min($lm['en'] / $cc - $r['vn'], 1);
+                    $r['en'] = min($lm['en'] / $cc - $r['vn'], 1);
             else unset($r['en']);
         }
         unset($r['sym']);
@@ -2117,10 +2127,9 @@ class CmnUtil
     protected static function getPathValue($path, $arr, $i = 0)
     {
         if (isset($path[$i]))
-            return self::getPathValue($path, $arr[$path[$i]] ?? "", $i + 1) ?? $arr;
+                return self::getPathValue($path, $arr[$path[$i]] ?? "", $i + 1) ?? $arr;
         else return $arr;
     }
-
 
     protected static function arrayToTableArray1(array $arr, int $d, array &$r, string $rKey, string $key = '')
     {
@@ -2216,6 +2225,7 @@ class CmnUtil
         elseif (is_bool($v)) return $v ? 4 : 5;
         elseif (is_null($v)) return 4;
         elseif (is_array($v)) return self::getStrLen(json_encode($v));
-        else throw new \Exception(__CLASS__ . "::" . __FUNCTION__ . " Error: unknown type of " . gettype($v));
+        else
+                throw new \Exception(__CLASS__ . "::" . __FUNCTION__ . " Error: unknown type of " . gettype($v));
     }
 }
