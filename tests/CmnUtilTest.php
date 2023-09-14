@@ -2,12 +2,11 @@
 
 namespace Dat\Utils;
 
-require_once(__DIR__. '/../src/BashUtil.php');
-require_once(__DIR__. '/../src/BaseUtil.php');
-require_once(__DIR__. '/../src/CmnUtil.php');
-require_once(__DIR__. '/../src/IpUtil.php');
-require_once(__DIR__. '/AbstractTest.php');
-
+require_once(__DIR__ . '/../src/BashUtil.php');
+require_once(__DIR__ . '/../src/BaseUtil.php');
+require_once(__DIR__ . '/../src/CmnUtil.php');
+require_once(__DIR__ . '/../src/IpUtil.php');
+require_once(__DIR__ . '/AbstractTest.php');
 class CmnUtilTest extends AbstractTest
 {
     const TARGET_CLASS = CmnUtil::class;
@@ -200,13 +199,11 @@ class CmnUtilTest extends AbstractTest
             [[['abc', 'def', 0123456, 3.1415926535, false, null, true, 'true']], "+-----+--------------+$n| key | value        |$n+-----+--------------+$n|   0 | abc          |$n|   1 | def          |$n|   2 |        42798 |
 |   3 | 3.1415926535 |$n|   4 |        FALSE |$n|   5 |         NULL |$n|   6 |         TRUE |$n|   7 | true         |
 +-----+--------------+"],
-
             [[['abc', 'def', 0123456, 3.1415926535, false, null, true, 'true'], 0, 1, 1], "+-------+-----+-----+-------+--------------+-------+------+------+------+$n| key   | 0   | 1   | 2     | 3            | 4     | 5    | 6    | 7    |$n+-------+-----+-----+-------+--------------+-------+------+------+------+$n| value | abc | def | 42798 | 3.1415926535 | FALSE | NULL | TRUE | true |$n+-------+-----+-----+-------+--------------+-------+------+------+------+"],
             [[["name" => "value 1", "name1" => "value 2....", "name2" => 123], 0, 1, 0, 1],
                 "+-------+-------------+$n| key   | value       |$n+-------+-------------+$n| name  | value 1     |
 +-------+-------------+$n| name1 | value 2.... |$n+-------+-------------+$n| name2 |         123 |$n+-------+-------------+"],
             [[["name" => "value 1", "name1" => "value 2....", "name2" => 123], 0, 1, 1], "+-------+---------+-------------+-------+$n| key   | name    | name1       | name2 |$n+-------+---------+-------------+-------+$n| value | value 1 | value 2.... |   123 |$n+-------+---------+-------------+-------+"],
-
             // MultiDimension array
             [[$arr[0], 0, 2], '+------+-------+-------------+-------------+--------+-------+-----------+------------+
 | key  | value | name        | name1       | name2  | name3 | name4     | name567890 |
@@ -276,7 +273,6 @@ class CmnUtilTest extends AbstractTest
             [[$arr[3], 0, 3, true], "+-----+---------------------+$n| key | Test                |$n+-----+---------------------+$n| a.b |          1565181040 |$n| a.c |                   0 |$n| a.d | 2019-08-07 12:30:40 |$n| e   | []                  |$n+-----+---------------------+"],
             [[[['a' => 123, 'b' => 456], ['a' => 78, 'b' => 9012]], 0, 2], "+-----+-----+------+$n| key | a   | b    |
 +-----+-----+------+$n|   0 | 123 |  456 |$n|   1 |  78 | 9012 |$n+-----+-----+------+"],
-
             [[[['lang' => 'en', 'a' => 1], ['lang' => 'th', 'a' => '']], 0, 2], "+-----+------+---+$n| key | lang | a |
 +-----+------+---+$n|   0 | en   | 1 |$n|   1 | th   |   |$n+-----+------+---+"],
             [[[['lang' => 'en', 'a' => 1], ['lang' => 'th', 'a' => '']], 1, 2, 1], "┌──────┬────┬────┐
@@ -423,7 +419,6 @@ class CmnUtilTest extends AbstractTest
         $hex = '4ed5fc85d4690f5b82c0137ed1c215cb0b5b8516';
         $r = call_user_func_array($fullMethodName, [$code]);
         self::assertEquals($hex, $r);
-
 
         $code = '';
         $hex = '';
@@ -606,13 +601,13 @@ class CmnUtilTest extends AbstractTest
     {
         return [
             ["//maps.googleapis.com/maps/api/staticmap?center=13.77148527637,100.49234518194&zoom=16&size=378x250&maptype=roadmap&markers=color:red%7Clabel:C%7C13.77148527637,100.49234518194&key=AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A", [
-                'center' => '13.77148527637,100.49234518194',
-                'zoom' => '16',
-                'size' => '378x250',
-                'maptype' => 'roadmap',
-                'markers' => 'color:red|label:C|13.77148527637,100.49234518194',
-                'key' => 'AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A'
-            ]],
+                    'center' => '13.77148527637,100.49234518194',
+                    'zoom' => '16',
+                    'size' => '378x250',
+                    'maptype' => 'roadmap',
+                    'markers' => 'color:red|label:C|13.77148527637,100.49234518194',
+                    'key' => 'AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A'
+                ]],
             ["http://g.cn/?a=1&b=2&c", ['a' => 1, 'b' => 2, 'c' => true]],
             ["http://g.cn/?a=1&b=2=3&c", ['a' => 1, 'c' => true]],
             ['?a=b', ['a' => 'b']],
@@ -984,9 +979,9 @@ class CmnUtilTest extends AbstractTest
      */
     public function testGetIpInfo($i, $er)
     {
-        try{
+        try {
             self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             self::assertTrue(true);
         }
     }
@@ -1031,4 +1026,21 @@ class CmnUtilTest extends AbstractTest
         ];
     }
 
+    /**
+     * 
+     * @param type $i
+     * @param type $er
+     * @dataProvider providerRemoveNullFrStr
+     */
+    public function testRemoveNullFrStr($i, $er)
+    {
+        self::assertSameTest(self::TARGET_CLASS, __FUNCTION__, $i, $er);
+    }
+
+    public function providerRemoveNullFrStr()
+    {
+        return [
+            [[hex2bin("680064007200")], 'hdr'],
+        ];
+    }
 }
