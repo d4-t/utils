@@ -6,7 +6,7 @@
  *  **  \ \ \_\ \ || |_\ \ \/_/\ \_/   *
  *   **  \ \____| ||_|\ \_\   \ \ \     *
  *    **  \/___/  /_/  \/_/    \/_/      *
- *     **       Copyright 2014-2019 Dat   *
+ *     **       Copyright 2014-2023 Dat   *
  *      *********************************** */
 
 namespace Dat\Utils;
@@ -35,7 +35,6 @@ class TestUtil
         $fullMethodName = $class . '::' . $methodName;
         $targetMethod = new \ReflectionMethod($fullMethodName);
         $isStatic = $targetMethod->isStatic();
-
 
         foreach ($testArr as $testcase) {
             $expR = end($testcase);

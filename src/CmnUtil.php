@@ -1808,6 +1808,21 @@ class CmnUtil
         return $r;
     }
 
+    public static function setGetParamToUrl(string $url, array $params): string
+    {
+        $r = $url;
+        $pieces = [];
+        if (strpos($url, '?') === false) $r .= '?';
+        else $pieces[] = '';
+        foreach ($params as $k => $v) {
+            $pieces[] = ($v === true) ? $k : $k . "=" . rawurlencode((string)$v);
+            
+//            $pieces[] = ($v === true) ? $k : $k . "=" . ((string)$v);
+        }
+        $pstr = implode('&', $pieces);
+        return $r . $pstr;
+    }
+
     /**
      *
      * @param DateInterval $dateDiff

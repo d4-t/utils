@@ -9,6 +9,8 @@
  *     **       Copyright 2014-2023 Dat   *
  *      *********************************** */
 
+// Refer to https://github.com/mjaschen/phpgeo
+
 namespace Dat\Utils;
 
 class GeoUtil

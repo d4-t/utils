@@ -616,6 +616,39 @@ class CmnUtilTest extends AbstractTest
     }
 
     /**
+     * 
+     * @param type $input
+     * @param type $er
+     *  @dataProvider providerSetGetParamToUrl
+     */
+    public function testSetGetParamToUrl($input, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+//        CmnUtil::debug($input,'input');
+        $r = call_user_func_array($fullMethodName, $input);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerSetGetParamToUrl()
+    {
+        return [
+            [["//maps.googleapis.com/maps/api/staticmap", [
+                    'center' => '13.77148527637,100.49234518194',
+                    'zoom' => '16',
+                    'size' => '378x250',
+                    'maptype' => 'roadmap',
+                    'markers' => 'color:red|label:C|13.77148527637,100.49234518194',
+                    'key' => 'AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A'
+                ]],"//maps.googleapis.com/maps/api/staticmap?center=13.77148527637%2C100.49234518194&zoom=16&size=378x250&maptype=roadmap&markers=color%3Ared%7Clabel%3AC%7C13.77148527637%2C100.49234518194&key=AIzaSyD61JfgDpdztsN0hj6Ykg0jM1n3x5zFS-A"],
+            [["http://g.cn/", ['a' => 1, 'b' => 2, 'c' => true]], "http://g.cn/?a=1&b=2&c"],
+            [["http://g.cn/?z", ['a' => 1, 'b' => 2, 'c' => true]], "http://g.cn/?z&a=1&b=2&c"],
+            [["", ['a' => 'b']], '?a=b'],
+            [["", ['a' => 'Å']], '?a=%C3%85'],
+        ];
+    }
+
+    /**
      *
      * @param type $dateDiff
      * @param type $precision
