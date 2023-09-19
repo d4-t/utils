@@ -8,7 +8,7 @@ class IpUtil
     public static function getIpInfo($ip)
     {
         if (class_exists("\Dat\Ip\Ip")) {
-            return \Dat\Ip\Ip::getInfo($ip);
+            return \Dat\Ip\Ip::getInfoStr($ip);
         }
         $ipCmd = __DIR__ . '/../../ipg/ip';
         if (!file_exists($ipCmd)) {

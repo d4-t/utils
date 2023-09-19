@@ -1816,7 +1816,7 @@ class CmnUtil
         else $pieces[] = '';
         foreach ($params as $k => $v) {
             $pieces[] = ($v === true) ? $k : $k . "=" . rawurlencode((string)$v);
-            
+
 //            $pieces[] = ($v === true) ? $k : $k . "=" . ((string)$v);
         }
         $pstr = implode('&', $pieces);
@@ -2044,6 +2044,33 @@ class CmnUtil
     public static function removeNullFrStr(string $str)
     {
         return str_replace("\0", "", $str);
+    }
+
+    /**
+     * Return the full file list including subdirectory of given path. Return empty array if empty path given. Return one element array if filename given
+     * @param string $path
+     * @return array
+     */
+    public static function getFullFileList(string $path): array
+    {
+        if (is_file($path)) return [$path];
+        $path = rtrim($path,'/');
+        $ffs = scandir($path);
+        unset($ffs[array_search('.', $ffs, true)]);
+        unset($ffs[array_search('..', $ffs, true)]);
+
+        // prevent empty ordered elements
+        if (count($ffs) < 1) return [];
+        $r = [];
+        foreach ($ffs as $ff) {
+            if (is_dir("$path/$ff")) {
+                $tmp = self::getFullFileList($path . '/' . $ff);
+                $r = array_merge($r, $tmp);
+            } else {
+                $r[] = "$path/$ff";
+            }
+        }
+        return $r;
     }
 
     protected static function getStrLangArr(string $str): array
