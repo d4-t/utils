@@ -4,8 +4,7 @@ use Dat\Utils\BashUtil;
 use Dat\Utils\AbstractTest;
 use Dat\Utils\CmnUtil;
 
-require_once(__DIR__ . '/../src/BashUtil.php');
-require_once(__DIR__ . '/../src/CmnUtil.php');
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 class BashUtilTest extends AbstractTest
 {
     const TARGET_CLASS = BashUtil::class;

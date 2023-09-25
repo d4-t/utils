@@ -2,11 +2,7 @@
 
 namespace Dat\Utils;
 
-require_once(__DIR__ . '/../src/BashUtil.php');
-require_once(__DIR__ . '/../src/BaseUtil.php');
-require_once(__DIR__ . '/../src/CmnUtil.php');
-require_once(__DIR__ . '/../src/IpUtil.php');
-require_once(__DIR__ . '/AbstractTest.php');
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 class CmnUtilTest extends AbstractTest
 {
     const TARGET_CLASS = CmnUtil::class;

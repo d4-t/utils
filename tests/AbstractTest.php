@@ -5,7 +5,7 @@ namespace Dat\Utils;
 
 use PHPUnit\Framework\TestCase;
 
-require_once(__DIR__.'/../src/TestUtil.php');
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 class AbstractTest extends TestCase
 {
