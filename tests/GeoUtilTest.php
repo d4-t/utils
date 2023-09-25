@@ -4,9 +4,9 @@ use Dat\Utils\GeoUtil;
 use Dat\Utils\AbstractTest;
 use Dat\Utils\Coordinate;
 
-require_once('../src/GeoUtil.php');
-require_once('../src/CmnUtil.php');
-require_once('../src/Coordinate.php');
+require_once(__DIR__ . '/../src/GeoUtil.php');
+require_once(__DIR__ . '/../src/CmnUtil.php');
+require_once(__DIR__ . '/../src/Coordinate.php');
 class GeoUtilTest extends AbstractTest
 {
     const TARGET_CLASS = GeoUtil::class;

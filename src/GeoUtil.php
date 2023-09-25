@@ -13,6 +13,7 @@
 
 namespace Dat\Utils;
 
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 class GeoUtil
 {
     const EARTH_RADIUS = 6378137.0; // in meters

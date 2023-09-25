@@ -723,7 +723,7 @@ class CmnUtilTest extends AbstractTest
             [$str0, null, ['jp' => 0.06896551724137932, 'zh' => 0.7275862068965517, 'en' => 0.20344827586206896]],
             ["mb_substr: Performs a multi-byte safe substr() operation based on number of characters. Position is counted from the beginning of str. First character's position is 0. Second character position is 1, and so on." . PHP_EOL . "Example: mb_substr('你好',1) returns '好'", null, ['en' => 0.9689119170984456, 'zh' => 0.015544041450777202]],
             ['câu này là tiếng việt', null, ['vn' => 1]],
-            [$str1, null, ['vn' => 0.2564102564102564, 'en' => 0.21538461538461534, 'zh' => 0.14358974358974355, 'jp' => 0.30769230769230765, 'th' => 0.07692307692307691]],
+            [$str1, null, ['vn' => 0.2564102564102564, 'en' => 0.21538461538461542, 'zh' => 0.14358974358974363, 'jp' => 0.3076923076923077, 'th' => 0.07692307692307693]],
             ['Россия – священная наша держава,
 Россия – любимая наша страна.
 Могучая воля, великая слава –

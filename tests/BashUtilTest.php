@@ -1,13 +1,11 @@
 <?php
 
-
 use Dat\Utils\BashUtil;
 use Dat\Utils\AbstractTest;
 use Dat\Utils\CmnUtil;
 
-require_once('../src/BashUtil.php');
-require_once('../src/CmnUtil.php');
-
+require_once(__DIR__ . '/../src/BashUtil.php');
+require_once(__DIR__ . '/../src/CmnUtil.php');
 class BashUtilTest extends AbstractTest
 {
     const TARGET_CLASS = BashUtil::class;

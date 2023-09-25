@@ -1,19 +1,20 @@
 {
   "name": "dat/utils",
-  "type": "Libiary",
+  "type": "libiary",
   "description": "Common PHP Libiary",
   "authors": [
     {
-      "name": "Dat",
+      "name": "dat",
       "email": "dat@nslasha.org",
       "role": "Developer"
     }
   ],
   "require": {
-    "php": ">=7.2.10"
+    "php": ">=7.3",
+    "mjaschen/phpgeo": "^4.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7"
+    "phpunit/phpunit": "^9.5"
   },
   "autoload": {
     "psr-4": {
