@@ -83,33 +83,6 @@ class GeoUtilTest extends AbstractTest
             [[new Coordinate(13.746037244124633, 100.53468288675624, 0), new Coordinate(13.737303599084951, 100.56030331220745, 50)], 2936.483157690902],
         ];
     }
-//
-//    /**
-//     * 
-//     * @param type $input
-//     * @param type $er
-//     * @dataProvider providerGetContainingRectangular
-//     */
-//    public function testGetContainingRectangular($input, $er)
-//    {
-//        $method = self::getTargetMethod(__FUNCTION__);
-//        $fullMethodName = self::TARGET_CLASS . '::' . $method;
-//        $r = call_user_func_array($fullMethodName, $input);
-//        self::assertEquals($er, $r);
-//    }
-//
-//    public function providerGetContainingRectangular()
-//    {
-//        $c = ['12.306197452150442, 99.93864817827209',
-//            '14.216034214829355, 99.94646272485335',
-//            '14.080887496099647, 101.35137584678407',
-//            '12.82388448156738, 101.17174743489089',
-//            '13.48936421789897, 100.50548973201118',];
-//        $points = GeoUtil::createCoordinatesByStrArr($c);
-//        return [
-//            [[$points], ['east' => 101.35137584678407, 'south' => 12.306197452150442, 'west' => 99.93864817827209, 'north' => 14.216034214829355]],
-//        ];
-//    }
 
     /**
      * 

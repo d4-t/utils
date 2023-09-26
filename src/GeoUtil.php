@@ -103,57 +103,37 @@ class GeoUtil
         return (count($a) === 2) ? new Coordinate($a[0], $a[1]) : new Coordinate($a[0], $a[1], $a[2]);
     }
 
-//    /**
-//     * Get the smallest rectangular that contains all the given coordinates
-//     * @param array $coordinates
-//     * @return array
-//     * @throws InvalidArgumentException
-//     * 
-//     * todo fix rectangular through date line
-//     */
-//    public static function getContainingRectangular(array $coordinates): array
-//    {
-//        if (count($coordinates) < 2)
-//                throw new InvalidArgumentException(__FUNCTION__ . ' input must have at least 2 points');
-//        if (!($coordinates[0] instanceof Coordinate))
-//                throw new InvalidArgumentException(__FUNCTION__ . " input must be array of \Location\Coordinate");
-//        $north = $south = $coordinates[0]->getLat();
-//        $east = $west = $coordinates[0]->getLng();
-//
-//        foreach ($coordinates as $coordinate) {
-//            if (!($coordinate instanceof Coordinate))
-//                    throw new InvalidArgumentException(__FUNCTION__ . " input must be array of \Location\Coordinate");
-//            $east = max($east, $coordinate->getLng());
-//            $west = min($west, $coordinate->getLng());
-//            $north = max($north, $coordinate->getLat());
-//            $south = min($south, $coordinate->getLat());
-//        }
-//        return ['east' => $east, 'south' => $south, 'west' => $west, 'north' => $north];
-//    }
-//
-//    /**
-//     *  Get the smallest rectangular that contains the given polygon
-//     * @param Polygon $polygon
-//     * @return type
-//     */
-//    public static function getPloygonContainingRectangular(Polygon $polygon)
-//    {
-//        return self::getContainingRectangular($polygon->getPoints());
-//    }
-
-    public static function northOf(OriCoordinate $coord, float $distance)
+    /**
+     * Get new coordinate north of given. Stop at north pole
+     * @param OriCoordinate $coord
+     * @param float $distance in meters
+     * @return Coordinate
+     */
+    public static function northOf(OriCoordinate $coord, float $distance): Coordinate
     {
         $lat = $coord->getLat();
         $newLat = max(min($lat + rad2deg($distance / self::EARTH_RADIUS), 90), -90);
         return new Coordinate($newLat, $coord->getLng());
     }
 
-    public static function southOf(OriCoordinate $coord, float $distance)
+    /**
+     * Get new coordinate sourth of given. Stop at south pole
+     * @param OriCoordinate $coord
+     * @param float $distance
+     * @return Coordinate
+     */
+    public static function southOf(OriCoordinate $coord, float $distance): Coordinate
     {
         return self::northOf($coord, -$distance);
     }
 
-    public static function eastOf(OriCoordinate $coord, float $distance)
+    /**
+     * Get new coordinate east of given
+     * @param OriCoordinate $coord
+     * @param float $distance in meters
+     * @return Coordinate
+     */
+    public static function eastOf(OriCoordinate $coord, float $distance): Coordinate
     {
         $lat = $coord->getLat();
         $lng = $coord->getLng();
@@ -164,11 +144,23 @@ class GeoUtil
         return new Coordinate($lat, $newLng);
     }
 
-    public static function westOf(OriCoordinate $coord, float $distance)
+    /**
+     *  Get new coordinate west of given
+     * @param OriCoordinate $coord
+     * @param float $distance
+     * @return Coordinate
+     */
+    public static function westOf(OriCoordinate $coord, float $distance): Coordinate
     {
         return self::eastOf($coord, -$distance);
     }
 
+    /**
+     * Get new bounds extended by distance
+     * @param Bounds $bounds
+     * @param float $distance in meters
+     * @return Bounds
+     */
     public static function getExtendedBounds(Bounds $bounds, float $distance): Bounds
     {
         $nw = $bounds->getNorthWest();
