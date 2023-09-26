@@ -83,4 +83,78 @@ class GeoUtilTest extends AbstractTest
             [[new Coordinate(13.746037244124633, 100.53468288675624, 0), new Coordinate(13.737303599084951, 100.56030331220745, 50)], 2936.483157690902],
         ];
     }
+//
+//    /**
+//     * 
+//     * @param type $input
+//     * @param type $er
+//     * @dataProvider providerGetContainingRectangular
+//     */
+//    public function testGetContainingRectangular($input, $er)
+//    {
+//        $method = self::getTargetMethod(__FUNCTION__);
+//        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+//        $r = call_user_func_array($fullMethodName, $input);
+//        self::assertEquals($er, $r);
+//    }
+//
+//    public function providerGetContainingRectangular()
+//    {
+//        $c = ['12.306197452150442, 99.93864817827209',
+//            '14.216034214829355, 99.94646272485335',
+//            '14.080887496099647, 101.35137584678407',
+//            '12.82388448156738, 101.17174743489089',
+//            '13.48936421789897, 100.50548973201118',];
+//        $points = GeoUtil::createCoordinatesByStrArr($c);
+//        return [
+//            [[$points], ['east' => 101.35137584678407, 'south' => 12.306197452150442, 'west' => 99.93864817827209, 'north' => 14.216034214829355]],
+//        ];
+//    }
+
+    /**
+     * 
+     * @param type $input
+     * @param type $er
+     * @dataProvider providerNorthOf
+     */
+    public function testNorthOf($input, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $r = call_user_func_array($fullMethodName, $input);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerNorthOf()
+    {
+        return [
+            [[new Coordinate(13.745519631139508, 100.53422512563881), 1.9 * 1000], new Coordinate(13.76258762153778, 100.53422512563881)],
+            [[new Coordinate(89, 100), 1000 * 1000], new Coordinate(90, 100)],
+            [[new Coordinate(1, 100), -20000 * 1000], new Coordinate(-90, 100)],
+        ];
+    }
+
+    /**
+     * 
+     * @param type $input
+     * @param type $er
+     * @dataProvider providerEastOf
+     */
+    public function testEastOf($input, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $r = call_user_func_array($fullMethodName, $input);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerEastOf()
+    {
+        return [
+            [[new Coordinate(13.745519631139508, 100.53422512563881), 1.9 * 1000], new Coordinate(13.745519631139508, 100.55179634426068)],
+            [[new Coordinate(60, 100), GeoUtil::EARTH_RADIUS * cos(deg2rad(60)) * pi()], new Coordinate(60, -80)],
+            [[new Coordinate(60, 100), GeoUtil::EARTH_RADIUS * cos(deg2rad(60)) * pi() * 5], new Coordinate(60, -80)],
+            [[new Coordinate(0, 100), GeoUtil::EARTH_RADIUS * pi() * 3], new Coordinate(0, -80)],
+        ];
+    }
 }
