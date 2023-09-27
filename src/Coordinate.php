@@ -28,4 +28,9 @@ class Coordinate extends \Location\Coordinate
     {
         return $alt === null ? true : $this->isNumericInBounds($alt, self::MIN_ALT, self::MAX_ALT);
     }
+
+    public function toString()
+    {
+        return $this->lat . ',' . $this->lng;
+    }
 }
