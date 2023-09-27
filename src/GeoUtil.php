@@ -14,9 +14,12 @@
 namespace Dat\Utils;
 
 use Dat\Utils\Coordinate;
-use Location\Coordinate as OriCoordinate;
 use InvalidArgumentException;
 use Location\Bounds;
+use Location\Coordinate as OriCoordinate;
+use Location\Polygon;
+use Location\Polyline;
+use Location\Processor\Polyline\SimplifyBearing;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 class GeoUtil
@@ -30,11 +33,12 @@ class GeoUtil
      * @param bool $ignoreAlt
      * @return float
      */
-    public static function getDistanceByCoordinates(Coordinate $coor1, Coordinate $coor2, bool $ignoreAlt = false): float
+    public static function getDistanceByCoordinates(OriCoordinate $coor1, OriCoordinate $coor2, bool $ignoreAlt = false): float
     {
-        return($ignoreAlt || $coor1->getAlt() === null || $coor2->getAlt() === null) ?
-                self::getDistanceByLatLng($coor1->getLat(), $coor1->getLng(), $coor2->getLat(), $coor2->getLng()) :
-                self::getDistanceByLatLngAlt($coor1->getLat(), $coor1->getLng(), $coor1->getAlt(), $coor2->getLat(), $coor2->getLng(), $coor2->getAlt());
+        if ($coor1 instanceof Coordinate && $coor2 instanceof OriCoordinate && !$ignoreAlt && $coor1->getAlt() !== null && $coor2->getAlt() !== null)
+                return self::getDistanceByLatLngAlt($coor1->getLat(), $coor1->getLng(), $coor1->getAlt(), $coor2->getLat(), $coor2->getLng(), $coor2->getAlt());
+        else
+                return self::getDistanceByLatLng($coor1->getLat(), $coor1->getLng(), $coor2->getLat(), $coor2->getLng());
     }
 
     /**
@@ -168,5 +172,28 @@ class GeoUtil
         $newNw = self::westOf(self::northOf($nw, $distance), $distance);
         $newSe = self::eastOf(self::southOf($se, $distance), $distance);
         return new Bounds($newNw, $newSe);
+    }
+
+    public static function getRadius(Polygon $polygon): float
+    {
+        $bounds = $polygon->getBounds();
+        return self::getDistanceByCoordinates($bounds->getNorthWest(), $bounds->getSouthEast()) / 2;
+    }
+
+    public static function simplifyPolygon(Polygon $polygon, int $maxPoints = 10)
+    {
+        if ($maxPoints < 3)
+                throw new InvalidArgumentException(__FUNCTION__ . " maxPoints must be larger than 2, $maxPoints is given");
+        $r = $polygon;
+        $bearing = 0;
+        while ($r->getNumberOfPoints() > $maxPoints) {
+            $processor = new SimplifyBearing(++$bearing);
+            $polyline = new Polyline();
+            $polyline->addPoints($polygon->getPoints());
+            $newPolyline = $processor->simplify($polyline);
+            $r = new Polygon();
+            $r->addPoints($newPolyline->getPoints());
+        }
+        return $r;
     }
 }
