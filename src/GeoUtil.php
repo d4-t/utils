@@ -82,7 +82,7 @@ class GeoUtil
     /**
      * Create array of /Dat/Util/Coordinate by array of string containing latitude, longitude (and optionaly altitude)
      * @param array $strArr
-     * @return type
+     * @return Array of Coordinates
      */
     public static function createCoordinatesByStrArr(array $strArr)
     {
@@ -195,5 +195,62 @@ class GeoUtil
             $r->addPoints($newPolyline->getPoints());
         }
         return $r;
+    }
+
+    /**
+     * Get the center of array of coordinates. Use average of all points method, cannot guarantee the center falls in polygon formed by coordinates
+     * 
+     * @param Array $arr Array of Coordinates
+     * @return Coordinate|null
+     * @throws InvalidArgumentException
+     */
+    public static function getCenterOfCoords(Array $arr): ?Coordinate
+    {
+        $numPoints = count($arr);
+        if ($numPoints === 0) return null;
+
+        $sumX = 0;
+        $sumY = 0;
+
+        foreach ($arr as $coord) {
+            if (!$coord instanceof OriCoordinate)
+                    throw new \InvalidArgumentException("Input must be array of Location\Coordinate");
+            $sumX += $coord->getLat();
+            $sumY += $coord->getLng();
+        }
+
+        $centerX = $sumX / $numPoints;
+        $centerY = $sumY / $numPoints;
+
+        return new Coordinate($centerX, $centerY);
+    }
+
+    /**
+     * Sort array of coordinates, by default clockwise
+     * 
+     * @param Array $arr array of Coordinates
+     * @param bool $isClockwise default true
+     * @return Array|null
+     * @throws InvalidArgumentException
+     */
+    public static function sortCoords(Array $arr, bool $isClockwise = true): ?Array
+    {
+        $numPoints = count($arr);
+        if ($numPoints === 0) return null;
+
+        $center = self::getCenterOfCoords($arr);
+        if (!$center) return null;
+
+        $coordinates = $arr;
+        usort($coordinates, function ($a, $b) use ($center, $isClockwise) {
+            if (!$a instanceof OriCoordinate || !$b instanceof OriCoordinate)
+                    throw new \InvalidArgumentException("Input must be array of Location\Coordinate");
+            $angleA = atan2($a->getLat() - $center->getLat(), $a->getLng() - $center->getLng());
+            $angleB = atan2($b->getLat() - $center->getLat(), $b->getLng() - $center->getLng());
+            if ($angleA === $angleB) return 0;
+            $cw = (bool)($angleA > $angleB);
+            return $isClockwise ? ($cw ? 1 : -1) : ($cw ? -1 : 1);
+        });
+        return $coordinates;
     }
 }

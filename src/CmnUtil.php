@@ -1312,7 +1312,7 @@ class CmnUtil
      * @param int $markSet 0 (+-|), 1 (table symbols), 2 (space)
      * @param int $dimension
      * @param bool $isTrans transit table
-     * @param bool $rowSeperator seperate the rows by lines
+     * @param bool $rowSeperator separate the rows by lines
      * @return string
      */
     public static function arrayToTable(array $a, int $markSet = 0, int $dimension = 1, $isTrans = false, $rowSeperator = false): string

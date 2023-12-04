@@ -192,4 +192,54 @@ class GeoUtilTest extends AbstractTest
             self::assertLessThan($r->getNumberOfPoints(), $i - 3);
         }
     }
+
+    /**
+     * 
+     * @param type $input
+     * @param type $er
+     * @dataProvider providerSortCoords
+     */
+    public function testSortCoords($input, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $r = call_user_func_array($fullMethodName, $input);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerSortCoords()
+    {
+        return [
+            [[[new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(2, 2), new Coordinate(2, 1),], false],
+                [new Coordinate(2, 1), new Coordinate(2, 2), new Coordinate(1, 2), new Coordinate(1, 1),]],
+            [[[new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(2, 2), new Coordinate(2, 1),]],
+                [new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(2, 2), new Coordinate(2, 1),]],
+            [[[new Coordinate(4, 0), new Coordinate(4, 4), new Coordinate(0, 4), new Coordinate(0, 0), new Coordinate(1, 0),]],
+                [new Coordinate(1, 0), new Coordinate(0, 0), new Coordinate(0, 4), new Coordinate(4, 4), new Coordinate(4, 0),]],
+        ];
+    }
+
+    /**
+     * 
+     * @param type $input
+     * @param type $er
+     * @dataProvider providerGetCenterOfCoords
+     */
+    public function testGetCenterOfCoords($input, $er)
+    {
+        $method = self::getTargetMethod(__FUNCTION__);
+        $fullMethodName = self::TARGET_CLASS . '::' . $method;
+        $r = call_user_func_array($fullMethodName, $input);
+        self::assertEquals($er, $r);
+    }
+
+    public function providerGetCenterOfCoords()
+    {
+        return [
+            [[[new Coordinate(1, 1), new Coordinate(1, 2), new Coordinate(2, 2), new Coordinate(2, 1),]], new Coordinate(1.5, 1.5)],
+            [[[new Coordinate(0, 0), new Coordinate(0, 4), new Coordinate(4, 4), new Coordinate(4, 3), new Coordinate(1, 3), new Coordinate(1, 1), new Coordinate(4, 1), new Coordinate(4, 0),]], new Coordinate(2.25, 2.0)],
+            [[[new Coordinate(2.729556548852544, 9.85997827624088), new Coordinate(2.729556899648832, 9.86146052931508), new Coordinate(2.727409119922688, 9.86199450289521), new Coordinate(2.727403529418739, 9.86048417150364), new Coordinate(2.727811999102427, 9.86037573547394),]], new Coordinate(2.7283476193890457, 9.860858643085749)],
+            [[[]], null]
+        ];
+    }
 }
